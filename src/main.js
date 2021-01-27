@@ -1,4 +1,8 @@
 
+function updateCounter() {
+    document.getElementById('counter').innerText = list.children.length;
+}
+
 function createElementWithAttribute(element, attributeType, attributValue ) {
     const newElement = document.createElement(element);
     newElement[attributeType] = attributValue;
@@ -8,7 +12,7 @@ function createElementWithAttribute(element, attributeType, attributValue ) {
 const addButton = document.getElementById('add-button');
 
 const list = document.getElementById('list');
-
+updateCounter();
 
 
 
@@ -27,6 +31,7 @@ addButton.addEventListener('click', (e) => {
 
     //      reset text-input
     list.append(newItem);
+    updateCounter();
     input.value = "";
     input.focus();
 })
