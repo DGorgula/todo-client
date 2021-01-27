@@ -1,3 +1,19 @@
+function sortList() {
+    const fragment = document.createDocumentFragment();
+    const listItems = Array.from(list.children);
+
+    const orderedListItems = listItems.sort((firstItem, secondItem)=>{
+        const firstItemPriority = firstItem.querySelector('.todo-priority').innerText;
+        const secondItemPriority = secondItem.querySelector('.todo-priority').innerText;
+        return firstItemPriority - secondItemPriority;
+    });
+
+    for (const item of orderedListItems) {
+        fragment.append(item);
+    }
+    
+    list.appendChild(fragment);
+}
 
 function updateCounter() {
     document.getElementById('counter').innerText = list.children.length;
@@ -9,11 +25,13 @@ function createElementWithAttribute(element, attributeType, attributValue ) {
     return newElement;
 }
 
+//      here the code begin to run!
 const addButton = document.getElementById('add-button');
-
+const sortButton = document.getElementById('sort-button');
 const list = document.getElementById('list');
 updateCounter();
 
+sortButton.addEventListener('click', sortList);
 
 
 addButton.addEventListener('click', (e) => {
