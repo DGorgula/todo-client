@@ -27,3 +27,7 @@ Monnday:
  - record submission video.
  - submit as required.
 
+# All Features I thought of from the beggining:
+ - use localstorage as default, and login option if info save required.
+ - multiple item adding seperated by `,` or something else.
+ - 
