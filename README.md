@@ -31,3 +31,11 @@ Monnday:
  - use localstorage as default, and login option if info save required.
  - multiple item adding seperated by `,` or something else.
  - multiple lists(inspired by Google Keep)
+ - tags with colors.
+ - deleting by clicking the text.
+ - small 'important' tag.
+ - search(filter by text), fast use by ctrl+F.
+ - drag & drop to change the order.
+ - focus from the beggining on #text-input.
+ - Enter key to add item.
+ - menu with important tasks, done tasks deleted tasks, and tags tree.
