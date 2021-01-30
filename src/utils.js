@@ -48,10 +48,12 @@ async function updateList(allToDos, list){
       const newItemPriority = createElementWithAttribute('div', 'className', 'todo-priority');
       const newItemCreationTime = createElementWithAttribute('div', 'className', 'todo-created-at');
       const newItemText = createElementWithAttribute('div', 'className', 'todo-text');
+      const trashSpan = createElementWithAttribute('span', 'class', 'delete-button');
+      const checkSpan = createElementWithAttribute('span', 'class', 'check-button');
       newItemPriority.innerText = item.priority;
       newItemCreationTime.innerText = item.date;
       newItemText.innerText = item.text;
-      newItem.append(newItemPriority, newItemCreationTime, newItemText);
+      newItem.append(checkSpan, newItemText, newItemCreationTime,  newItemPriority, trashSpan);
       list.append(newItem);
   }
   updateCounter();

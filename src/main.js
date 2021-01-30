@@ -14,13 +14,15 @@ addButton.addEventListener('click', (e) => {
     const input = document.getElementById('text-input');
     const priority = document.getElementById('priority-selector');
     const newItem = createElementWithAttribute('div', 'className', 'todo-container');
+    const trashSpan = createElementWithAttribute('span', 'class', 'delete-button');
+    const checkSpan = createElementWithAttribute('span', 'class', 'check-button');
     const newItemPriority = createElementWithAttribute('div', 'className', 'todo-priority');
     const newItemCreationTime = createElementWithAttribute('div', 'className', 'todo-created-at');
     const newItemText = createElementWithAttribute('div', 'className', 'todo-text');
     newItemCreationTime.innerText = new Date().toISOString().slice(0, 19).replace('T', ' ');
     newItemText.innerText = input.value;
     newItemPriority.innerText = priority.value;
-    newItem.append(newItemPriority, newItemCreationTime, newItemText);
+    newItem.append(checkSpan, newItemText, newItemCreationTime,  newItemPriority, trashSpan);
     
     //      reset text-input
     list.append(newItem);
