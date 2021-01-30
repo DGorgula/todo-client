@@ -90,8 +90,8 @@ test("'completed-tasks' link in the menu", async () => {
 
 test("delete buttons for each container", async () => {
   await page.goto(path);
-  await page.waitForSelector('.delete-button');
-  const deleteButtons = await page.$$('.todo-text');
+  await page.waitForSelector('.text-input');
+  const deleteButtons = await page.$$('.delete-button');
   const containers = await page.$$('.todo-container');
   const deleteButtonParent = await (await (await deleteButtons[0].getProperty('parentElement')).getProperty('className')).jsonValue();
 
