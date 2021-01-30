@@ -53,7 +53,15 @@ afterEach(async () => {
 
 });
 
+test("Has menu", async () => {
+  const multipleText = 'first, second, third';
 
+  await page.goto(path);
+  await page.waitForSelector('body #text-input');
+  const menu = await page.$$('#menu');
+  expect(menu.length).toBe(1);
+
+});
 
 
 
