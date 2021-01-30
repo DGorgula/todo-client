@@ -7,12 +7,12 @@ document.addEventListener('keydown', (e) => {
         addButton.click();
     }
 })
-const allToDos = {'my-todo': []};
+const allTasks = {'my-todo': []};
 const addButton = document.getElementById('add-button');
 const sortButton = document.getElementById('sort-button');
 const list = document.getElementById('View');
-updateList(allToDos, list);
-console.log(allToDos);
+updateList(allTasks, list);
+console.log(allTasks);
 sortButton.addEventListener('click', sortList);
 
 
@@ -32,7 +32,8 @@ addButton.addEventListener('click', (e) => {
     newTextDiv.innerText = input.value;
     newPriorityDiv.innerText = newTaskpriority.value;
     newTask.append(checkSpan, newTextDiv, newCreationTimeDiv,  newPriorityDiv, trashSpan, newTaskStatusSpan);
-    
+
+
     //      reset text-input
     list.append(newTask);
     input.value = "";
@@ -40,7 +41,7 @@ addButton.addEventListener('click', (e) => {
     updateCounter();
 
     //      create new list item
-    allToDos['my-todo'].push(
+    allTasks['my-todo'].push(
         {
                 text: newTasktext,
                 priority: newTaskpriority.value,
@@ -48,10 +49,15 @@ addButton.addEventListener('click', (e) => {
                 'data-status': newTaskStatus
             }
         );
-        const didItWork = setPersistent(API_KEY, allToDos);
+        const didItWork = setPersistent(API_KEY, allTasks);
 })
-
-
+function showOnly(allTasks, stringToFilter) {
+    
+    const filtered = allTasks['my-todo'].filter((item) => {
+        return item.text.includes(stringToFilter);
+    })
+    return filtered;
+}
 function setStatus(priority) {
     if(priority>="3"){
         return 'important';

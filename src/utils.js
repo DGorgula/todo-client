@@ -38,12 +38,12 @@ console.log(await respond);
 
 
 
-async function updateList(allToDos, list){
+async function updateList(allTasks, list){
   const importedList = await getPersistent(API_KEY);
   const jsonedList = await importedList;
 
   for (const item of await jsonedList['my-todo']) {
-    allToDos['my-todo'].push(item);
+    allTasks['my-todo'].push(item);
     const task = createElementWithAttribute('div', 'className', 'todo-container');
       const taskPriority = createElementWithAttribute('div', 'className', 'todo-priority');
       const taskCreationTime = createElementWithAttribute('div', 'className', 'todo-created-at');
