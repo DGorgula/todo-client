@@ -1,5 +1,12 @@
 
 //      here the code begin to run!
+const input = document.getElementById('text-input');
+input.focus();
+document.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') {
+        addButton.click();
+    }
+})
 const allToDos = {'my-todo': []};
 const addButton = document.getElementById('add-button');
 const sortButton = document.getElementById('sort-button');
@@ -11,7 +18,6 @@ sortButton.addEventListener('click', sortList);
 
 addButton.addEventListener('click', (e) => {
     const text = document.getElementById('text-input').value;
-    const input = document.getElementById('text-input');
     const priority = document.getElementById('priority-selector');
     const newItem = createElementWithAttribute('div', 'className', 'todo-container');
     const trashSpan = createElementWithAttribute('span', 'class', 'delete-button');
