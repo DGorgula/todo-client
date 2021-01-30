@@ -1,13 +1,67 @@
 
 //      here the code begin to run!
 const input = document.getElementById('text-input');
+const commandInput = document.getElementById('command-input');
 input.focus();
-document.addEventListener('keyup', (e) => {
-    if(e.key === 'Enter') {
-        addButton.click();
+document.addEventListener('keydown', (e) => {
+    if (e.key === ':' && document.activeElement !== commandInput) {
+        e.preventDefault();
+        console.log("ok");
+        commandInput.value = ':';
+        commandInput.focus();
+        
     }
-    else if(document.activeElement === input) {
+});
+document.addEventListener('keyup', (e) => {
+    console.log(e.key);
+    if(document.activeElement === input) {
         showOnly(input.value);
+        if (e.key === 'Enter') {
+            addButton.click();
+        }
+    }
+    else if (e.key === 'Escape') {
+        commandInput.value= '';
+        input.focus();
+    }
+    else if (document.activeElement === commandInput && e.key === 'Enter') {
+        switch (commandInput.value) {
+            case ':s':
+                //sort the list
+                sortList();
+                break;
+            case ':+':
+                //font-size increase
+                break;
+            case ':-':
+                //font-size decrease
+                break;
+            case ':mi':
+                //show all important tasks (as click on menu > important)
+
+                break;
+            case ':mc':
+                //show all checked/completed tasks (as click on menu > checked)
+
+                break;
+            case ':md':
+                //show all deleted tasks (as click on menu > deleted)
+                break;
+            case ':c':
+                //check current. c[1-9] will check the containter 
+                break;
+            case ':d':
+                //delete current. d[1-9] will delete the containter 
+                break;
+            case ':da':
+                //delete all tasks in View
+                break;
+                default:
+                    break;
+                }
+                commandInput.value = '';
+                input.focus();
+                
     }
 })
 const allTasks = {'my-todo': []};
