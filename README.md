@@ -32,7 +32,8 @@ Monnday:
  - multiple item adding seperated by `,` or something else.
  - multiple lists(inspired by Google Keep)
  - tags with colors.
- - deleting by clicking the text.
+ - delete button that appears on hover.
+ - edit task by clicking the text.
  - small 'important' tag.
  - search(filter by text), fast use by ctrl+F.
  - drag & drop to change the order.
