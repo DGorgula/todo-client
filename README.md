@@ -40,3 +40,4 @@ Monnday:
  - focus from the beggining on #text-input.
  - press 'Enter' key to add item.
  - menu with important tasks, completed tasks, deleted tasks, and tags tree.
+ - keyboard only use - set of keys to navigate and make actions.

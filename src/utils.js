@@ -42,19 +42,20 @@ async function updateList(allToDos, list){
   const importedList = await getPersistent(API_KEY);
   const jsonedList = await importedList;
 
-  for (const item of jsonedList['my-todo']) {
+  for (const item of await jsonedList['my-todo']) {
     allToDos['my-todo'].push(item);
-    const newItem = createElementWithAttribute('div', 'className', 'todo-container');
-      const newItemPriority = createElementWithAttribute('div', 'className', 'todo-priority');
-      const newItemCreationTime = createElementWithAttribute('div', 'className', 'todo-created-at');
-      const newItemText = createElementWithAttribute('div', 'className', 'todo-text');
-      const trashSpan = createElementWithAttribute('span', 'class', 'delete-button');
-      const checkSpan = createElementWithAttribute('span', 'class', 'check-button');
-      newItemPriority.innerText = item.priority;
-      newItemCreationTime.innerText = item.date;
-      newItemText.innerText = item.text;
-      newItem.append(checkSpan, newItemText, newItemCreationTime,  newItemPriority, trashSpan);
-      list.append(newItem);
+    const task = createElementWithAttribute('div', 'className', 'todo-container');
+      const taskPriority = createElementWithAttribute('div', 'className', 'todo-priority');
+      const taskCreationTime = createElementWithAttribute('div', 'className', 'todo-created-at');
+      const taskText = createElementWithAttribute('div', 'className', 'todo-text');
+      task.dataset['status'] = item['data-status']
+      const trashSpan = createElementWithAttribute('span', 'className', 'delete-button');
+      const checkSpan = createElementWithAttribute('span', 'className', 'check-button');
+      taskPriority.innerText = item.priority;
+      taskCreationTime.innerText = item.date;
+      taskText.innerText = item.text;
+      task.append(checkSpan, taskText, taskCreationTime,  taskPriority, trashSpan);
+      list.append(task);
   }
   updateCounter();
 

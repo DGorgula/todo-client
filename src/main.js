@@ -17,21 +17,24 @@ sortButton.addEventListener('click', sortList);
 
 
 addButton.addEventListener('click', (e) => {
-    const text = document.getElementById('text-input').value;
-    const priority = document.getElementById('priority-selector');
-    const newItem = createElementWithAttribute('div', 'className', 'todo-container');
-    const trashSpan = createElementWithAttribute('span', 'class', 'delete-button');
-    const checkSpan = createElementWithAttribute('span', 'class', 'check-button');
-    const newItemPriority = createElementWithAttribute('div', 'className', 'todo-priority');
-    const newItemCreationTime = createElementWithAttribute('div', 'className', 'todo-created-at');
-    const newItemText = createElementWithAttribute('div', 'className', 'todo-text');
-    newItemCreationTime.innerText = new Date().toISOString().slice(0, 19).replace('T', ' ');
-    newItemText.innerText = input.value;
-    newItemPriority.innerText = priority.value;
-    newItem.append(checkSpan, newItemText, newItemCreationTime,  newItemPriority, trashSpan);
+    const newTasktext = document.getElementById('text-input').value;
+    const newTaskpriority = document.getElementById('priority-selector');
+    const newTaskStatus = setStatus(newTaskpriority.value)
+    const newTask = createElementWithAttribute('div', 'className', 'todo-container');
+    const trashSpan = createElementWithAttribute('span', 'className', 'delete-button');
+    const checkSpan = createElementWithAttribute('span', 'className', 'check-button');
+    const newTaskStatusSpan = createElementWithAttribute('span', 'data-status', newTaskStatus);
+    newTask.dataset['status'] = newTaskStatus;
+    const newPriorityDiv = createElementWithAttribute('div', 'className', 'todo-priority');
+    const newCreationTimeDiv = createElementWithAttribute('div', 'className', 'todo-created-at');
+    const newTextDiv = createElementWithAttribute('div', 'className', 'todo-text');
+    newCreationTimeDiv.innerText = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    newTextDiv.innerText = input.value;
+    newPriorityDiv.innerText = newTaskpriority.value;
+    newTask.append(checkSpan, newTextDiv, newCreationTimeDiv,  newPriorityDiv, trashSpan, newTaskStatusSpan);
     
     //      reset text-input
-    list.append(newItem);
+    list.append(newTask);
     input.value = "";
     input.focus();
     updateCounter();
@@ -39,13 +42,23 @@ addButton.addEventListener('click', (e) => {
     //      create new list item
     allToDos['my-todo'].push(
         {
-                text: text,
-                priority: priority.value,
-                date: new Date().toISOString().slice(0, 19).replace('T', ' ')
+                text: newTasktext,
+                priority: newTaskpriority.value,
+                date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                'data-status': newTaskStatus
             }
         );
         const didItWork = setPersistent(API_KEY, allToDos);
 })
+
+
+function setStatus(priority) {
+    if(priority>="3"){
+        return 'important';
+    }
+    return 'normal';
+}
+
 
 function sortList() {
     const fragment = document.createDocumentFragment();
