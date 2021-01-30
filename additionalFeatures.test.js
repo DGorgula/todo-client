@@ -69,7 +69,7 @@ test("Has menu", async () => {
 test("'important-tasks' link in the menu", async () => {
   await page.goto(path);
   await page.waitForSelector('body #text-input');
-  const importantTasksLink = await page.$$('a #important-tasks');
+  const importantTasksLink = await page.$$('#important-tasks');
   const menu = await importantTasksLink[0].getProperty('parentElement');
   const menuId = await ( await menu.getProperty('id')).jsonValue();
 
@@ -80,7 +80,7 @@ test("'important-tasks' link in the menu", async () => {
 test("'completed-tasks' link in the menu", async () => {
   await page.goto(path);
   await page.waitForSelector('body #text-input');
-  const completedTasksLink = await page.$$('a #completed-tasks');
+  const completedTasksLink = await page.$$('#completed-tasks');
   const menu = await completedTasksLink[0].getProperty('parentElement');
   const menuId = await ( await menu.getProperty('id')).jsonValue();
 
