@@ -15,7 +15,7 @@ document.addEventListener('keydown', (e) => {
 document.addEventListener('keyup', (e) => {
     console.log(e.key);
     if(document.activeElement === input) {
-        showOnly(input.value);
+        showOnly();
         if (e.key === 'Enter') {
             addButton.click();
         }
@@ -38,14 +38,16 @@ document.addEventListener('keyup', (e) => {
                 break;
             case ':mi':
                 //show all important tasks (as click on menu > important)
-
+                showOnly('important');
+                
                 break;
             case ':mc':
+                showOnly('completed');
                 //show all checked/completed tasks (as click on menu > checked)
-
                 break;
             case ':md':
-                //show all deleted tasks (as click on menu > deleted)
+                showOnly('deleted');
+                    //show all deleted tasks (as click on menu > deleted)
                 break;
             case ':c':
                 //check current. c[1-9] will check the containter 
@@ -109,14 +111,23 @@ addButton.addEventListener('click', (e) => {
         );
         const didItWork = setPersistent(API_KEY, allTasks);
 })
-function showOnly() {
+function showOnly(showByStatus) {
+    if(showByStatus !== undefined){
+        const filtered = allTasks['my-todo'].filter((item) => {
+        return item['data-status'] === showByStatus;
+    })
+    list.replaceChildren();
+    recreateView(filtered);
+    return;
+    }
+    else{
     const stringToFilter = input.value;
     const filtered = allTasks['my-todo'].filter((item) => {
         return item.text.includes(stringToFilter);
     })
     list.replaceChildren();
     recreateView(filtered);
-    // list.appendChild(fragment);
+    }
 }
 function setStatus(priority) {
     if(priority>="3"){
@@ -168,6 +179,4 @@ function recreateView(listToView) {
         task.append(checkSpan, taskText, taskCreationTime,  taskPriority, trashSpan);
         list.append(task);
     }
-    // updateCounter();
-  
   }
