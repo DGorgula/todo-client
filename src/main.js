@@ -2,9 +2,12 @@
 //      here the code begin to run!
 const input = document.getElementById('text-input');
 input.focus();
-document.addEventListener('keydown', (e) => {
+document.addEventListener('keyup', (e) => {
     if(e.key === 'Enter') {
         addButton.click();
+    }
+    else if(document.activeElement === input) {
+        showOnly(input.value);
     }
 })
 const allTasks = {'my-todo': []};
@@ -38,6 +41,7 @@ addButton.addEventListener('click', (e) => {
     list.append(newTask);
     input.value = "";
     input.focus();
+    showOnly();
     updateCounter();
 
     //      create new list item
@@ -51,12 +55,14 @@ addButton.addEventListener('click', (e) => {
         );
         const didItWork = setPersistent(API_KEY, allTasks);
 })
-function showOnly(allTasks, stringToFilter) {
-    
+function showOnly() {
+    const stringToFilter = input.value;
     const filtered = allTasks['my-todo'].filter((item) => {
         return item.text.includes(stringToFilter);
     })
-    return filtered;
+    list.replaceChildren();
+    recreateView(filtered);
+    // list.appendChild(fragment);
 }
 function setStatus(priority) {
     if(priority>="3"){
@@ -92,3 +98,22 @@ function createElementWithAttribute(element, attributeType, attributValue ) {
     newElement[attributeType] = attributValue;
     return newElement;
 }
+
+function recreateView(listToView) {
+    for (const item of listToView ) {
+      const task = createElementWithAttribute('div', 'className', 'todo-container');
+        const taskPriority = createElementWithAttribute('div', 'className', 'todo-priority');
+        const taskCreationTime = createElementWithAttribute('div', 'className', 'todo-created-at');
+        const taskText = createElementWithAttribute('div', 'className', 'todo-text');
+        task.dataset['status'] = item['data-status']
+        const trashSpan = createElementWithAttribute('span', 'className', 'delete-button');
+        const checkSpan = createElementWithAttribute('span', 'className', 'check-button');
+        taskPriority.innerText = item.priority;
+        taskCreationTime.innerText = item.date;
+        taskText.innerText = item.text;
+        task.append(checkSpan, taskText, taskCreationTime,  taskPriority, trashSpan);
+        list.append(task);
+    }
+    // updateCounter();
+  
+  }
