@@ -63,6 +63,37 @@ test("Has menu", async () => {
 
 });
 
+test("'important-tasks' link in the menu", async () => {
+  await page.goto(path);
+  await page.waitForSelector('body #text-input');
+  const importantTasksLink = await page.$$('a #important-tasks');
+  const menu = await importantTasksLink[0].getProperty('parentElement');
+  const menuId = await ( await menu.getProperty('id')).jsonValue();
 
+  expect(menuId).toBe('menu');
 
+});
+
+test("'completed-tasks' link in the menu", async () => {
+  await page.goto(path);
+  await page.waitForSelector('body #text-input');
+  const completedTasksLink = await page.$$('a #completed-tasks');
+  const menu = await completedTasksLink[0].getProperty('parentElement');
+  const menuId = await ( await menu.getProperty('id')).jsonValue();
+
+  expect(menuId).toBe('menu');
+
+});
+
+test("delete buttons for each container", async () => {
+  await page.goto(path);
+  await page.waitForSelector('.delete-button');
+  const deleteButtons = await page.$$('.todo-text');
+  const containers = await page.$$('.todo-container');
+  const deleteButtonParent = await (await (await deleteButtons[0].getProperty('parentElement')).getProperty('className')).jsonValue();
+
+  expect(deleteButtonParent).toBe('todo-container');
+  expect(containers.length).toBe(deleteButtons.length);
+
+});
 });
