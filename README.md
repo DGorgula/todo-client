@@ -38,5 +38,5 @@ Monnday:
  - search(filter by text), fast use by ctrl+F.
  - drag & drop to change the order.
  - focus from the beggining on #text-input.
- - Enter key to add item.
- - menu with important tasks, done tasks deleted tasks, and tags tree.
+ - press 'Enter' key to add item.
+ - menu with important tasks, completed tasks, deleted tasks, and tags tree.

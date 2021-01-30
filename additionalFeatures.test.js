@@ -36,6 +36,9 @@ afterEach(async () => {
 
   await page.goto(path);
   await page.waitForSelector('body #text-input');
+  await page.waitFor(1000);
+  const firstContainerText = await page.$$('.todo-text');
+  expect(firstContainerText.length).toBe(0);
   await page.click('body #text-input');
   await page.type('#text-input', multipleText, {delay: 250});
   await page.select('body #priority-selector', '3');
