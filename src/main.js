@@ -11,18 +11,26 @@ const sortButton = document.getElementById('sort-button');
 document.addEventListener('keydown', (e) => {
     if (e.key === ':' && document.activeElement !== commandInput) {
         e.preventDefault();
-        console.log("ok");
         commandInput.value = ':';
         commandInput.focus();
         
     }
 });
 document.addEventListener('keyup', (e) => {
+    const prioritySelector = document.getElementById('priority-selector')
     if(document.activeElement === input) {
         showOnly();
         if (e.key === 'Enter') {
             addButton.click();
             return;
+        }
+        else if (e.key === 'ArrowUp') {
+            
+            prioritySelector.selectedIndex++;
+        }
+        else if (e.key === 'ArrowDown') {
+            prioritySelector.selectedIndex--;
+            
         }
     }
     else if (e.key === 'Escape') {
@@ -91,12 +99,14 @@ addButton.addEventListener('click', (e) => {
     //          create new task
     const newTaskpriority = document.getElementById('priority-selector');
     const newTaskStatus = 'active';
-
+    let temporaryDate = new Date();
+    temporaryDate = temporaryDate.setHours(temporaryDate.getHours()+2);
+    const newTaskTime = new Date(temporaryDate).toISOString().slice(0, 19).replace('T', ' ');
     allTasks['my-todo'].push(
         {
             text: input.value,
             priority: newTaskpriority.value,
-            date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+            date: newTaskTime,
             'data-status': newTaskStatus
         }
         );
@@ -197,7 +207,6 @@ function deleteTasks(tasks) {
         return;
     }
     for (const task of tasks) {
-        console.log(task);
         task['data-status'] = 'deleted';
         allTasks['my-todo'] = allTasks['my-todo']
         .filter((item) => {
