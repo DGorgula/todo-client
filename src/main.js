@@ -31,6 +31,7 @@ document.addEventListener('keyup', (e) => {
         return;
     }
     else if (document.activeElement === commandInput && e.key === 'Enter') {
+        const tasksInView =  document.querySelectorAll('.todo-container');
         switch (commandInput.value) {
             case ':s':
                 //sort the list
@@ -59,11 +60,11 @@ document.addEventListener('keyup', (e) => {
                 //check current. c[1-9] will check the containter 
                 break;
             case ':d1':
-                const tasksInView =  document.querySelectorAll('.todo-container');
                 deleteTasks(tasksInView[0]);
                 //delete current. d[1-9] will delete the containter 
                 break;
-            case ':da':
+                case ':da':
+                deleteTasks(tasksInView);
                 //delete all tasks in View
                 break;
                 default:
@@ -188,7 +189,6 @@ function deleteTasks(tasks) {
         tasks.dataset.status = 'deleted';
         allTasks['my-todo'] = allTasks['my-todo']
         .filter((item) => {
-            console.log(item.date, tasks.querySelector('.todo-created-at'));
             return item.date !== tasks.querySelector('.todo-created-at').innerText;
         });
         recreateView();
@@ -197,7 +197,17 @@ function deleteTasks(tasks) {
         return;
     }
     for (const task of tasks) {
-        task.dataset = 'deleted';
+        console.log(task);
+        task['data-status'] = 'deleted';
+        allTasks['my-todo'] = allTasks['my-todo']
+        .filter((item) => {
+            console.log(item.date, task.querySelector('.todo-created-at'));
+            return item.date !== task.querySelector('.todo-created-at').innerText;
+        });
     }
+    list.replaceChildren()
+    recreateView();
+    updateCounter();
+    setPersistent(API_KEY, allTasks);
 
 }
