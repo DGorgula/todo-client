@@ -43,6 +43,7 @@ console.log(await respond);
 async function updateList(allTasks, list){
   const importedList = await getPersistent(API_KEY);
   const jsonedList = await importedList;
+  // console.log(relevantTasks(), allTasks['my-todo'][0]['data-status']);
   allTasks['my-todo'] = jsonedList['my-todo'];
   recreateView(allTasks['my-todo']);
   updateCounter();

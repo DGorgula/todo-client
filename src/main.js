@@ -88,6 +88,9 @@ document.addEventListener('click', (e)=> {
     if (e.target.className === 'delete-button') {
         deleteTasks(e.target.parentElement);
     }
+    else if (e.target.className === 'checkbox') {
+        checkTasks(e.target);
+    }
 })
 
 
@@ -98,7 +101,7 @@ addButton.addEventListener('click', (e) => {
 
     //          create new task
     const newTaskpriority = document.getElementById('priority-selector');
-    const newTaskStatus = 'active';
+    const newTaskStatus = 'relevant';
     let temporaryDate = new Date();
     temporaryDate = temporaryDate.setHours(temporaryDate.getHours()+2);
     const newTaskTime = new Date(temporaryDate).toISOString().slice(0, 19).replace('T', ' ');
@@ -118,8 +121,9 @@ addButton.addEventListener('click', (e) => {
         input.focus();
         const didItWork = setPersistent(API_KEY, allTasks);
 });
-    
-function showOnly(showByStatus) {
+
+function showOnly(showByStatus = 'relevant') {
+    const stringToFilter = input.value;
     if (showByStatus === 'important') {
         const filtered = allTasks['my-todo']
         .filter((item) => {
@@ -132,20 +136,11 @@ function showOnly(showByStatus) {
     else if(showByStatus){
         const filtered = allTasks['my-todo']
         .filter((item) => {
-        return item['data-status'] === showByStatus;
+        return (item['data-status'] === showByStatus && item.text.includes(stringToFilter));
         })
         list.replaceChildren();
         recreateView(filtered);
         return;
-    }
-    else {
-        const stringToFilter = input.value;
-        const filtered = allTasks['my-todo'].filter((item) => {
-            return item.text.includes(stringToFilter);
-        })
-        list.replaceChildren();
-        recreateView(filtered);
-
     }
 }
 
@@ -185,38 +180,116 @@ function recreateView(listToView = allTasks['my-todo']) {
         task.dataset['status'] = item['data-status']
         const trashSpan = createElementWithAttribute('span', 'className', 'delete-button');
         trashSpan.innerText = 'delete';
-        const checkSpan = createElementWithAttribute('checkbox', 'className', 'check-button');
+        const checkbox = createElementWithAttribute('input', 'type', 'checkbox');
+        checkbox.className = 'checkbox';
+        
         taskPriority.innerText = item.priority;
         taskCreationTime.innerText = item.date;
         taskText.innerText = item.text;
-        task.append(checkSpan, taskText, taskCreationTime,  taskPriority, trashSpan);
+        task.append(checkbox, taskText, taskCreationTime,  taskPriority, trashSpan);
+        console.log(item['data-status']);
+        if (item['data-status'] === 'completed') {
+            checkbox.checked = true;
+        }
+        else if (item['data-status'] === 'deleted') {
+            checkbox.hidden = true;
+            trashSpan.innerText = 'Restore';
+        }
         list.append(task);
     }
   }
 
 function deleteTasks(tasks) {
     if(tasks.length === undefined) {
-        tasks.dataset.status = 'deleted';
-        allTasks['my-todo'] = allTasks['my-todo']
-        .filter((item) => {
-            return item.date !== tasks.querySelector('.todo-created-at').innerText;
-        });
-        recreateView();
-        updateCounter();
-        setPersistent(API_KEY, allTasks);
-        return;
+        if (tasks.dataset.status !== 'deleted') {
+            console.log(tasks.dataset.status);
+            
+            tasks.dataset.status = 'deleted';
+            tasks.querySelector('.checkbox').hidden = true;
+            tasks.querySelector('.delete-button').innerText = 'Restore';
+            const deletedTask = allTasks['my-todo']
+            .filter((item) => {
+                if(item.date === tasks.querySelector('.todo-created-at').innerText) {
+                    item['data-status'] = 'deleted';
+                }
+                return;
+            });
+        }
+        else if (tasks.dataset.status === 'deleted') {
+            
+            tasks.dataset.status = 'relevant';
+            tasks.querySelector('.checkbox').hidden = false;
+            tasks.querySelector('.delete-button').innerText = 'delete';
+            const deletedTask = allTasks['my-todo']
+            .filter((item) => {
+                if(item.date === tasks.querySelector('.todo-created-at').innerText) {
+                    item['data-status'] = 'relevant';
+                }
+                return;
+            });
+        }
+            // recreateView();
+            // updateCounter();
+            input.value = '';
+            input.focus();
+            setPersistent(API_KEY, allTasks);
+            return;
+        }
+        for (const task of tasks) {
+            if (tasks.dataset.status !== 'deleted') {
+            
+                tasks.dataset.status = 'deleted';
+                tasks.querySelector('.checkbox').hidden = true;
+                tasks.querySelector('.delete-button').innerText = 'Restore';
+                const deletedTask = allTasks['my-todo']
+                .filter((item) => {
+                    if(item.date === tasks.querySelector('.todo-created-at').innerText){
+                        item['data-status'] = 'deleted';
+                    }
+                    return;
+            });
+        }
+        else if (tasks.dataset.status === 'deleted') {
+            
+            tasks.dataset.status = 'relevant';
+            tasks.querySelector('.checkbox').hidden = false;
+            tasks.querySelector('.delete-button').innerText = 'delete';
+            const deletedTask = allTasks['my-todo']
+            .filter((item) => {
+                if(item.date === tasks.querySelector('.todo-created-at').innerText){
+                    item['data-status'] = 'relevant';
+                }
+                return;
+            });
     }
-    for (const task of tasks) {
-        task['data-status'] = 'deleted';
-        allTasks['my-todo'] = allTasks['my-todo']
-        .filter((item) => {
-            console.log(item.date, task.querySelector('.todo-created-at'));
-            return item.date !== task.querySelector('.todo-created-at').innerText;
-        });
-    }
-    list.replaceChildren()
-    recreateView();
-    updateCounter();
+    // list.replaceChildren()
+    // recreateView();
+    // updateCounter();
+    input.value = '';
+    input.focus();
     setPersistent(API_KEY, allTasks);
 
+}
+}
+
+//      consider to unite checkTasks and deleteTasks functions
+function checkTasks(tasksToCheck, status) {
+    tasksToCheck.parentElement.dataset.status = 'completed';
+    const bla = allTasks['my-todo']
+        .filter((item) => {
+            console.log(item.date, tasksToCheck.parentElement.querySelector('.todo-created-at').innerText);
+        if(item.date === tasksToCheck.parentElement.querySelector('.todo-created-at').innerText){
+            if(item['data-status'] === 'completed'){
+                item['data-status'] = 'relevant';
+                return;
+            }
+            else if(item['data-status'] === 'relevant') {
+            item['data-status'] = 'completed';
+            }
+        }
+        return;
+    });
+    input.value = '';
+    input.focus();
+    setPersistent(API_KEY, allTasks);
 }
