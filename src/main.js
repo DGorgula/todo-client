@@ -1,8 +1,13 @@
-
+// list.replaceChildren();   important code for recreateView()
 //      here the code begin to run!
 const input = document.getElementById('text-input');
 const commandInput = document.getElementById('command-input');
 input.focus();
+const allTasks = {'my-todo': []};
+const list = document.getElementById('View');
+updateList(allTasks, list);
+const addButton = document.getElementById('add-button');
+const sortButton = document.getElementById('sort-button');
 document.addEventListener('keydown', (e) => {
     if (e.key === ':' && document.activeElement !== commandInput) {
         e.preventDefault();
@@ -13,16 +18,17 @@ document.addEventListener('keydown', (e) => {
     }
 });
 document.addEventListener('keyup', (e) => {
-    console.log(e.key);
     if(document.activeElement === input) {
         showOnly();
         if (e.key === 'Enter') {
             addButton.click();
+            return;
         }
     }
     else if (e.key === 'Escape') {
         commandInput.value= '';
         input.focus();
+        return;
     }
     else if (document.activeElement === commandInput && e.key === 'Enter') {
         switch (commandInput.value) {
@@ -52,7 +58,9 @@ document.addEventListener('keyup', (e) => {
             case ':c':
                 //check current. c[1-9] will check the containter 
                 break;
-            case ':d':
+            case ':d1':
+                const tasksInView =  document.querySelectorAll('.todo-container');
+                deleteTasks(tasksInView[0]);
                 //delete current. d[1-9] will delete the containter 
                 break;
             case ':da':
@@ -63,85 +71,79 @@ document.addEventListener('keyup', (e) => {
                 }
                 commandInput.value = '';
                 input.focus();
-                
+                return;
     }
 })
-const allTasks = {'my-todo': []};
-const addButton = document.getElementById('add-button');
-const sortButton = document.getElementById('sort-button');
-const list = document.getElementById('View');
-updateList(allTasks, list);
-console.log(allTasks);
 sortButton.addEventListener('click', sortList);
+document.addEventListener('click', (e)=> {
+    if (e.target.className === 'delete-button') {
+        deleteTasks(e.target.parentElement);
+    }
+})
 
 
 addButton.addEventListener('click', (e) => {
-    const newTasktext = document.getElementById('text-input').value;
+    if (input.value === '') {
+        return;
+    }
+
+    //          create new task
     const newTaskpriority = document.getElementById('priority-selector');
-    const newTaskStatus = setStatus(newTaskpriority.value)
-    const newTask = createElementWithAttribute('div', 'className', 'todo-container');
-    const trashSpan = createElementWithAttribute('span', 'className', 'delete-button');
-    const checkSpan = createElementWithAttribute('span', 'className', 'check-button');
-    const newTaskStatusSpan = createElementWithAttribute('span', 'data-status', newTaskStatus);
-    newTask.dataset['status'] = newTaskStatus;
-    const newPriorityDiv = createElementWithAttribute('div', 'className', 'todo-priority');
-    const newCreationTimeDiv = createElementWithAttribute('div', 'className', 'todo-created-at');
-    const newTextDiv = createElementWithAttribute('div', 'className', 'todo-text');
-    newCreationTimeDiv.innerText = new Date().toISOString().slice(0, 19).replace('T', ' ');
-    newTextDiv.innerText = input.value;
-    newPriorityDiv.innerText = newTaskpriority.value;
-    newTask.append(checkSpan, newTextDiv, newCreationTimeDiv,  newPriorityDiv, trashSpan, newTaskStatusSpan);
+    const newTaskStatus = 'active';
 
-
-    //      reset text-input
-    list.append(newTask);
-    input.value = "";
-    input.focus();
-    showOnly();
-    updateCounter();
-
-    //      create new list item
     allTasks['my-todo'].push(
         {
-                text: newTasktext,
-                priority: newTaskpriority.value,
-                date: new Date().toISOString().slice(0, 19).replace('T', ' '),
-                'data-status': newTaskStatus
-            }
+            text: input.value,
+            priority: newTaskpriority.value,
+            date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+            'data-status': newTaskStatus
+        }
         );
+        recreateView(allTasks['my-todo'][-1]);
+        
+        //      reset page
+        updateCounter();
+        input.value = "";
+        input.focus();
         const didItWork = setPersistent(API_KEY, allTasks);
-})
+});
+    
 function showOnly(showByStatus) {
-    if(showByStatus !== undefined){
-        const filtered = allTasks['my-todo'].filter((item) => {
+    if (showByStatus === 'important') {
+        const filtered = allTasks['my-todo']
+        .filter((item) => {
+        return item.priority > 2;
+        })
+        list.replaceChildren();
+        recreateView(filtered);
+        return;
+    }
+    else if(showByStatus){
+        const filtered = allTasks['my-todo']
+        .filter((item) => {
         return item['data-status'] === showByStatus;
-    })
-    list.replaceChildren();
-    recreateView(filtered);
-    return;
+        })
+        list.replaceChildren();
+        recreateView(filtered);
+        return;
     }
-    else{
-    const stringToFilter = input.value;
-    const filtered = allTasks['my-todo'].filter((item) => {
-        return item.text.includes(stringToFilter);
-    })
-    list.replaceChildren();
-    recreateView(filtered);
+    else {
+        const stringToFilter = input.value;
+        const filtered = allTasks['my-todo'].filter((item) => {
+            return item.text.includes(stringToFilter);
+        })
+        list.replaceChildren();
+        recreateView(filtered);
+
     }
-}
-function setStatus(priority) {
-    if(priority>="3"){
-        return 'important';
-    }
-    return 'normal';
 }
 
 
 function sortList() {
     const fragment = document.createDocumentFragment();
     const listItems = Array.from(list.children);
-
-    const orderedListItems = listItems.sort((firstItem, secondItem)=>{
+    const orderedListItems = listItems
+    .sort((firstItem, secondItem)=> {
         const firstItemPriority = firstItem.querySelector('.todo-priority').innerText;
         const secondItemPriority = secondItem.querySelector('.todo-priority').innerText;
         return secondItemPriority - firstItemPriority;
@@ -150,7 +152,6 @@ function sortList() {
     for (const item of orderedListItems) {
         fragment.append(item);
     }
-    
     list.appendChild(fragment);
 }
 
@@ -164,15 +165,16 @@ function createElementWithAttribute(element, attributeType, attributValue ) {
     return newElement;
 }
 
-function recreateView(listToView) {
+function recreateView(listToView = allTasks['my-todo']) {
     for (const item of listToView ) {
-      const task = createElementWithAttribute('div', 'className', 'todo-container');
+        const task = createElementWithAttribute('div', 'className', 'todo-container');
         const taskPriority = createElementWithAttribute('div', 'className', 'todo-priority');
         const taskCreationTime = createElementWithAttribute('div', 'className', 'todo-created-at');
         const taskText = createElementWithAttribute('div', 'className', 'todo-text');
         task.dataset['status'] = item['data-status']
         const trashSpan = createElementWithAttribute('span', 'className', 'delete-button');
-        const checkSpan = createElementWithAttribute('span', 'className', 'check-button');
+        trashSpan.innerText = 'delete';
+        const checkSpan = createElementWithAttribute('checkbox', 'className', 'check-button');
         taskPriority.innerText = item.priority;
         taskCreationTime.innerText = item.date;
         taskText.innerText = item.text;
@@ -180,3 +182,22 @@ function recreateView(listToView) {
         list.append(task);
     }
   }
+
+function deleteTasks(tasks) {
+    if(tasks.length === undefined) {
+        tasks.dataset.status = 'deleted';
+        allTasks['my-todo'] = allTasks['my-todo']
+        .filter((item) => {
+            console.log(item.date, tasks.querySelector('.todo-created-at'));
+            return item.date !== tasks.querySelector('.todo-created-at').innerText;
+        });
+        recreateView();
+        updateCounter();
+        setPersistent(API_KEY, allTasks);
+        return;
+    }
+    for (const task of tasks) {
+        task.dataset = 'deleted';
+    }
+
+}
