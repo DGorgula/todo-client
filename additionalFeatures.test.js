@@ -15,9 +15,9 @@ let browser;
 describe(projectName, () => {
 beforeAll(async () => {
   browser = await puppeteer.launch({
-      // headless: false,
+      headless: false,
       args: ["--disable-web-security"],
-      // slowMo:50
+      slowMo: 50
   });
   page = await browser.newPage();
 });
@@ -36,19 +36,19 @@ afterEach(async () => {
 
   await page.goto(path);
   await page.waitForSelector('body #text-input');
-  await page.waitFor(1000);
+  // await page.waitFor(250);
   const firstContainerText = await page.$$('.todo-text');
   expect(firstContainerText.length).toBe(0);
   await page.click('body #text-input');
-  await page.type('#text-input', multipleText, {delay: 250});
+  await page.type('#text-input', multipleText, {delay: 50});
   await page.select('body #priority-selector', '3');
   await page.waitForSelector('body #add-button');
   await page.click('body #add-button');
-  await page.waitFor(1500);
+  await page.waitFor(500);
   
   const tasks = await page.$$('.todo-text');
   const first = await (await tasks[0].getProperty("innerText")).jsonValue();
-  await page.waitFor(1000);
+  await page.waitFor(5000);
   const second = await (await tasks[1].getProperty("innerText")).jsonValue();
   await page.waitFor(1000);
   const third = await (await tasks[2].getProperty("innerText")).jsonValue();
@@ -94,6 +94,10 @@ test("delete buttons for each container", async () => {
   await page.goto(path);
   await page.waitForSelector('#text-input');
   await page.waitFor(1000);
+  await page.click('body #text-input');
+  await page.type('#text-input', 'some text', {delay: 50});
+  await page.select('body #priority-selector', '2');
+  await page.click('body #add-button');
   const deleteButtons = await page.$$('.delete-button');
   const containers = await page.$$('.todo-container');
   const deleteButtonParent = await (await (await deleteButtons[0].getProperty('parentElement')).getProperty('className')).jsonValue();

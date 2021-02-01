@@ -22,19 +22,32 @@ document.addEventListener('keydown', (e) => {
 deleteAllButton.addEventListener('click', deleteOrRestoreAll);
 
 function deleteOrRestoreAll(event) {
-    const action = event.target.innerText.toLowerCase().slice(0,7).trim();
-    console.log(action);
+    let deleteButtonText = event.target.innerText;
+    const editedDeleteButtonText = deleteButtonText.toLowerCase().slice(0,7).trim();
+    if (list.children.length <= 0) {
+        alert(`There's nothing to ${editedDeleteButtonText}..`);
+        return;
+    }
+    console.log(deleteButtonText);
+    const action = editedDeleteButtonText;
     deleteTasks(list.children, action);
-    pageClean();
+    if(deleteButtonText === 'Delete All') {
+        console.log(action);
+
+        event.target.innerText = 'Restore All';
+    }
+    else{
+        event.target.innerText = 'Delete All';
+    }
+    cleanPage();
 }
-onclick="deleteTasks(list.children)"        /// build event listener
 document.addEventListener('keyup', (e) => {
     const prioritySelector = document.getElementById('priority-selector');
     const navigator = document.getElementById('navigator');
     const currentInputNavigator = document.getElementById('current-input');
     if (e.key === 'Escape') {
         navigator.innerText = 'All';
-        pageClean();
+        cleanPage();
         return;
     }
     else if(document.activeElement === input) {
@@ -57,20 +70,20 @@ document.addEventListener('keyup', (e) => {
         }
     }
     else if (document.activeElement === commandInput && e.key === 'Enter') {
+        const list = document.getElementById('View');
+        const keysetDiv =  document.getElementById('keyboard-mode-keyset');
         const tasksInView =  document.querySelectorAll('.todo-container');
         const navigator =  document.getElementById('navigator');
         const currentInputNavigator = document.getElementById('current-input');
         switch (commandInput.value) {
+            case ':k':
+                //show Keyboard-Mode keyset
+                keysetDiv.hidden = false;
+                return;
             case ':s':
                 //sort the list
-                sortList();
-                break;
-            case ':+':
-                //font-size increase
-                break;
-            case ':-':
-                //font-size decrease
-                break;
+                sortList(list.children);
+                return;
             case ':mi':
                 //show all important tasks (as click on menu > important)
                 navigator.innerText = 'important';
@@ -86,18 +99,19 @@ document.addEventListener('keyup', (e) => {
             case ':c':
                 //check current. c[1-9] will check the containter 
                 break;
-            case ':d1':
-                deleteTasks(tasksInView[0]);
-                //delete current. d[1-9] will delete the containter 
-                break;
-                case ':da':
-                deleteTasks(tasksInView);
+            case ':d':
+                deleteAllButton.click();
+                // deleteTasks(list.children, 'delete');
                 //delete all tasks in View
                 break;
-                default:
-                    break;
+            case ':r':
+                    // deleteTasks(list.children, 'restore');
+                    deleteAllButton.click();
+                // navigator.innerText = 'All';
+                //restore all tasks in View
+                break;
                 }
-                pageClean()
+                cleanPage()
                 return;
     }
 })
@@ -111,7 +125,7 @@ function menuLinksHandler(menuLink) {
     }
     const navigator =  document.getElementById('navigator');
     navigator.innerText = menuLink.target.innerText.toLowerCase();
-    pageClean();
+    cleanPage();
 }
 
 function containerButtonsCallback(e) {
@@ -160,7 +174,7 @@ function addTask(valueToAdd) {
         
         //      reset page
         updateCounter();
-        pageClean();
+        cleanPage();
         showOnly();
         try{
         return setPersistent(API_KEY, allTasks);
@@ -202,9 +216,9 @@ function sortList() {
     const listItems = Array.from(list.children);
     const orderedListItems = listItems
     .sort((firstItem, secondItem)=> {
-        const firstItemPriority = firstItem.querySelector('.todo-priority').innerText;
-        const secondItemPriority = secondItem.querySelector('.todo-priority').innerText;
-        return secondItemPriority - firstItemPriority;
+        const firstPriorityItem = firstItem.querySelector('.todo-priority').innerText;
+        const secondPriorityItem = secondItem.querySelector('.todo-priority').innerText;
+        return secondPriorityItem - firstPriorityItem;
     });
 
     for (const item of orderedListItems) {
@@ -251,9 +265,9 @@ function recreateView(listToView = allTasks['my-todo']) {
     }
   }
 
-async function deleteTasks(tasksToDelete, action) {
-    if (action) {
-        if(tasksToDelete.length === undefined) {        // differ between single and multiple 
+  async function deleteTasks(tasksToDelete, action) {
+      if (action) {
+          if(tasksToDelete.length === undefined) {        // differ between single and multiple 
             tasksToDelete = tasksToDelete.target.parentElement;
             deleteOrRestoreTask(tasksToDelete, action);
         }
@@ -264,6 +278,7 @@ async function deleteTasks(tasksToDelete, action) {
         }
     }
     else {
+        if(tasksToDelete.length === undefined) {        // differ between single and multiple 
         tasksToDelete = tasksToDelete.target.parentElement;
         if (tasksToDelete.dataset.status !== 'deleted') {
             deleteOrRestoreTask(tasksToDelete, 'delete');
@@ -272,12 +287,13 @@ async function deleteTasks(tasksToDelete, action) {
             deleteOrRestoreTask(tasksToDelete, 'restore');
         }
     }
-    try{
-        await setPersistent(API_KEY, allTasks);
-    }
-    catch(e) {
-        alert('There was a problem sending data to the server,\n Please try to reload and repeat your last actions.\nThe specific error message is:\n' + e);
-    }
+}
+        try{
+            await setPersistent(API_KEY, allTasks);
+        }
+        catch(e) {
+            alert('There was a problem sending data to the server,\n Please try to reload and repeat your last actions.\nThe specific error message is:\n' + e);
+        }
     showOnly();
 }
             //      consider to unite taskCompleter and deleteTasks functions
@@ -313,7 +329,7 @@ function taskCompleter(task) {
             return true;
         }
     });
-    pageClean();
+    cleanPage();
     try{
         setPersistent(API_KEY, allTasks);
     }
@@ -321,9 +337,11 @@ function taskCompleter(task) {
         alert('There was a problem sending data to the server,\n Please try to reload and repeat your last actions.\nThe specific error message is:\n' + e);
     }
 }
-function pageClean() {
+function cleanPage() {
+    const keysetDiv = document.getElementById('keyboard-mode-keyset');
     const currentInputNavigator = document.getElementById('current-input');
     currentInputNavigator.innerText = '';
+    keysetDiv.hidden = true;
     commandInput.value= '';
     input.value = '';
     input.focus();
