@@ -1,0 +1,41 @@
+* {
+    box-sizing: border-box;
+    font-size: 1em;
+    margin: 0;
+    padding: 0;
+}
+body {
+    height: 100vh;
+    width: 100vw;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+/* CSS for Menu */
+#menu {
+    grid-column: 1/2;
+    grid-row: 3/10;
+    background-color: blue;
+    margin: 0 4vw;
+}
+
+main {
+    grid-column: 2/4;
+    grid-row: 2/12;
+}
+
+#command-input {
+    grid-column: 1/4;
+    grid-row: 12;
+}
+
+#keyboard-mode {
+    grid-column: 2/3;
+    grid-row: 4/10;
+}
+
+#navigator-container {
+    grid-column: 1/4;
+    grid-row: 1;
+}

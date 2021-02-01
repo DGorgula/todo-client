@@ -39,9 +39,8 @@ body: JSON.stringify(data)};
 async function updateList(allTasks, list){
 try {
   const importedList = await getPersistent(API_KEY);
-  const jsonedList = await importedList;
-  // console.log(relevantTasks(), allTasks['my-todo'][0]['data-status']);
-  allTasks['my-todo'] = jsonedList['my-todo'];
+  allTasks['my-todo'] = importedList["my-todo"];
+  //  jsonedList['my-todo'];
 } catch(e) {
   alert('There was a problem getting data from the server,\n Please try to reload.\nThe specific error message is:\n' + e);
   }
