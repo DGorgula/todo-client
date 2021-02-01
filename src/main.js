@@ -9,6 +9,7 @@ updateList(allTasks, list);
 const addButton = document.getElementById('add-button');
 const sortButton = document.getElementById('sort-button');
 const menu = document.getElementById('menu');
+const deleteAllButton = document.getElementById('delete-all-button');
 document.addEventListener('keydown', (e) => {
     if (e.key === ':' && document.activeElement !== commandInput) {
         e.preventDefault();
@@ -17,6 +18,16 @@ document.addEventListener('keydown', (e) => {
         
     }
 });
+
+deleteAllButton.addEventListener('click', deleteOrRestoreAll);
+
+function deleteOrRestoreAll(event) {
+    const action = event.target.innerText.toLowerCase().slice(0,7).trim();
+    console.log(action);
+    deleteTasks(list.children, action);
+    pageClean();
+}
+onclick="deleteTasks(list.children)"        /// build event listener
 document.addEventListener('keyup', (e) => {
     const prioritySelector = document.getElementById('priority-selector');
     const navigator = document.getElementById('navigator');
@@ -151,7 +162,12 @@ function addTask(valueToAdd) {
         updateCounter();
         pageClean();
         showOnly();
+        try{
         return setPersistent(API_KEY, allTasks);
+        }
+        catch(e) {
+            alert('There was a problem sending data to the server,\n Please try to reload and repeat your last actions.\nThe specific error message is:\n' + e);
+        }
 }
 
 function showOnly(showByStatus = 'relevant') {
@@ -235,83 +251,35 @@ function recreateView(listToView = allTasks['my-todo']) {
     }
   }
 
-async function deleteTasks(stuffToDelete) {
-    let toStatus;
-    let checkboxHiddenToState;
-    let toButtonContent;
-    
-
-
-    if(stuffToDelete.length === undefined) {        // differ between single and multiple elements
-        let relevantTasks;
-        let container;
-        if (stuffToDelete.target) {
-            container = stuffToDelete.target.parentElement;
+async function deleteTasks(tasksToDelete, action) {
+    if (action) {
+        if(tasksToDelete.length === undefined) {        // differ between single and multiple 
+            tasksToDelete = tasksToDelete.target.parentElement;
+            deleteOrRestoreTask(tasksToDelete, action);
         }
-        if (container.dataset.status !== 'deleted') {
-            toStatus = 'deleted';
-            checkboxHiddenToState = true;
-            toButtonContent = "Restore";
+        else {
+            for (const task of tasksToDelete) {
+                deleteOrRestoreTask(task, action);
+            }
         }
-        else if (container.dataset.status === 'deleted') {
-            toStatus = 'relevant';
-            checkboxHiddenToState = false;
-            toButtonContent = 'delete';
+    }
+    else {
+        if (tasksToDelete.dataset.status !== 'deleted') {
+            deleteOrRestoreTask(tasksToDelete, 'delete');
         }
-            console.log(container.dataset.status);
-            
-            container.dataset.status = toStatus;
-            container.querySelector('.checkbox').hidden = checkboxHiddenToState;
-            container.querySelector('.delete-button').innerText = toButtonContent;
-            relevantTasks = allTasks['my-todo']
-            .filter((item) => {
-                if(item.date === container.querySelector('.todo-created-at').innerText) {
-                    item['data-status'] = toStatus;
-                }
-                return;
-            });
-            container.hidden = true;
-            console.log(container.dataset.status);
-            // pageClean()
-            await setPersistent(API_KEY, allTasks);
-            showOnly();
-            // return;
+        else {
+            deleteOrRestoreTask(tasksToDelete, 'restore');
         }
-    //     for (const task of tasks) {
-    //         if (tasks.dataset.status !== 'deleted') {
-    //             tasks.dataset.status = 'deleted';
-    //             tasks.querySelector('.checkbox').hidden = true;
-    //             tasks.querySelector('.delete-button').innerText = 'Restore';
-    //             relevantTasks = allTasks['my-todo']
-    //             .filter((item) => {
-    //                 if(item.date === tasks.querySelector('.todo-created-at').innerText){
-    //                     item['data-status'] = 'relevant';
-    //                 }
-    //                 return;
-    //         });
-    //     }
-    //     else if (tasks.dataset.status === 'deleted') {
-            
-    //         tasks.dataset.status = 'relevant';
-    //         tasks.querySelector('.checkbox').hidden = false;
-    //         tasks.querySelector('.delete-button').innerText = 'delete';
-    //         relevantTasks = allTasks['my-todo']
-    //         .filter((item) => {
-    //             if(item.date === tasks.querySelector('.todo-created-at').innerText){
-    //                 item['data-status'] = 'relevant';
-    //             }
-    //             return;
-    //         });
-    // }
-    // list.replaceChildren()
-    // recreateView(relevantTasks);
-    // pageClean();
-    // setPersistent(API_KEY, allTasks);
-
-// }
+    }
+    try{
+        await setPersistent(API_KEY, allTasks);
+    }
+    catch(e) {
+        alert('There was a problem sending data to the server,\n Please try to reload and repeat your last actions.\nThe specific error message is:\n' + e);
+    }
+    showOnly();
 }
-
-//      consider to unite taskCompleter and deleteTasks functions
+            //      consider to unite taskCompleter and deleteTasks functions
 function dataStatusChanger(elementOrObjectType, elementOrObject) {
     if (elementOrObjectType === 'element') {
         console.log(elementOrObject);
@@ -327,7 +295,7 @@ function dataStatusChanger(elementOrObjectType, elementOrObject) {
         return;
     }
     else if(elementOrObject['data-status'] === 'relevant') {
-    elementOrObject['data-status'] = 'completed';
+        elementOrObject['data-status'] = 'completed';
     }
 }
 function taskCompleter(task) {
@@ -338,14 +306,19 @@ function taskCompleter(task) {
     dataStatusChanger('element', task);
     console.log("sadf");
     const currentTaskObj = allTasks['my-todo']
-        .filter((item) => {
+    .filter((item) => {
         if(item.date === task.parentElement.querySelector('.todo-created-at').innerText){
             dataStatusChanger('object', item)
             return true;
         }
     });
     pageClean();
-    setPersistent(API_KEY, allTasks);
+    try{
+        setPersistent(API_KEY, allTasks);
+    }
+    catch(e) {
+        alert('There was a problem sending data to the server,\n Please try to reload and repeat your last actions.\nThe specific error message is:\n' + e);
+    }
 }
 function pageClean() {
     const currentInputNavigator = document.getElementById('current-input');
@@ -356,7 +329,7 @@ function pageClean() {
     showOnly();
 }
 
- // async to avoid breaking network flow.
+// async to avoid breaking network flow.
 async function addMultipleTasks(multipleValue) {
     const seperatedValues = multipleValue.split(',');
     for (const value of seperatedValues) {
@@ -367,3 +340,28 @@ async function addMultipleTasks(multipleValue) {
 function menuHandler(params) {
     console.log(" i am not defined!");
 }
+
+function deleteOrRestoreTask(task, action) {
+    if (action === 'delete') {
+        toStatus = 'deleted';
+        checkboxHiddenToState = true;
+        toButtonContent = "Restore";
+    }
+    else if (action === 'restore') {
+        toStatus = 'relevant';
+        checkboxHiddenToState = false;
+        toButtonContent = 'delete';
+    }
+    
+    task.dataset.status = toStatus;
+    task.querySelector('.checkbox').hidden = checkboxHiddenToState;
+    task.querySelector('.delete-button').innerText = toButtonContent;
+    relevantTasks = allTasks['my-todo']
+    .filter((item) => {
+        if(item.date === task.querySelector('.todo-created-at').innerText) {
+            item['data-status'] = toStatus;
+            }
+            return;
+        });
+        task.hidden = true;
+    }
