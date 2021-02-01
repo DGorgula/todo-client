@@ -8,16 +8,14 @@ async function getPersistent(key) {
   const request = {
     headers: {'X-Master-Key': key
 }};
-// try {
-  
   let respond = await fetch(`https://api.jsonbin.io/v3/b/6012bfd76bdb326ce4bc67af/latest`, request);
   const texted = await respond.text();
   const jsoned = JSON.parse(texted);
   const content = jsoned['record'];
   // orderList(content);
-
-
+  
   return content;
+
   
   }
 
@@ -29,10 +27,8 @@ async function setPersistent(key, data) {
     headers: { 'Content-Type': 'application/json' , 'X-Master-Key': key
 },
 body: JSON.stringify(data)};
-
-const respond = await fetch("https://api.jsonbin.io/v3/b/6012bfd76bdb326ce4bc67af", request);
-console.log(await respond);
-
+  const respond = await fetch("https://api.jsonbin.io/v3/b/6012bfd76bdb326ce4bc67af", request);
+  
   return true;
 }
 
@@ -41,10 +37,14 @@ console.log(await respond);
 
 //maybe should run this without a function in the main.
 async function updateList(allTasks, list){
+try {
   const importedList = await getPersistent(API_KEY);
   const jsonedList = await importedList;
   // console.log(relevantTasks(), allTasks['my-todo'][0]['data-status']);
   allTasks['my-todo'] = jsonedList['my-todo'];
+} catch(e) {
+  alert('There was a problem getting data from the server,\n Please try to reload.\nThe specific error message is:\n' + e);
+  }
   recreateView(allTasks['my-todo']);
   // showOnly();
   updateCounter();

@@ -264,6 +264,7 @@ async function deleteTasks(tasksToDelete, action) {
         }
     }
     else {
+        tasksToDelete = tasksToDelete.target.parentElement;
         if (tasksToDelete.dataset.status !== 'deleted') {
             deleteOrRestoreTask(tasksToDelete, 'delete');
         }
