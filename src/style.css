@@ -1,3 +1,12 @@
+:root {
+    --corners: 0.5rem;
+    --heading-size: 2rem;
+    --theme-color: #dc4d3f;
+    --heading-color: #ffece8;
+    --background-color: #fafafa;
+    --border: 0.05rem solid rgb(211, 211, 211);
+}
+
 * {
     box-sizing: border-box;
     font-size: 1em;
@@ -14,11 +23,64 @@ body {
 
 /* CSS for Menu */
 #menu {
+    position: relative;
     grid-column: 1/2;
-    grid-row: 3/10;
-    background-color: blue;
-    margin: 0 4vw;
+    grid-row: 4/10;
+    margin: 0 4vw 0 0;
+    border: var(--border);
+    border-bottom-right-radius: var(--corners);
+    background-color: var(--background-color);
+}
+
+#menu-title {
+    grid-column: 1/2;
+    grid-row: 3/4;
+    margin: 0 4vw 0 0;
+    padding: 0.7rem 0;
+    background-color: var(--theme-color);
+    border-top-right-radius: var(--corners);
+    text-align: center;
+    color: var(--heading-color);
+    font-size: var(--heading-size);
+}
+
+.navigation-link {
+    padding: 0.7rem 0;
+    margin: 1rem 1rem;
+    display: block;
+    text-align: center;
+    background-color: var(--theme-color);
+    /* border-radius: var(--corners); */
+    color: var(--heading-color);
+    font-weight: bold;
+    text-decoration: none;
     
+}
+
+#contact-div {
+    
+    width: 100%;
+    bottom: 0;
+    position: absolute;
+    /* display: flex; */
+    /* width: fit-content; */
+    /* align-items: center;
+    justify-items: center; */
+}
+
+#contact-links-div {
+    width: 100%;
+    padding: 1rem;
+    display: flex;
+    
+    text-align: center;
+    justify-content: space-around;
+
+}
+
+.contact-link {
+    width: 2rem;
+    height: 2rem;
 }
 
 main {
