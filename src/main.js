@@ -8,6 +8,7 @@ const list = document.getElementById('View');
 updateList(allTasks, list);
 const addButton = document.getElementById('add-button');
 const sortButton = document.getElementById('sort-button');
+const menu = document.getElementById('menu');
 document.addEventListener('keydown', (e) => {
     if (e.key === ':' && document.activeElement !== commandInput) {
         e.preventDefault();
@@ -17,8 +18,15 @@ document.addEventListener('keydown', (e) => {
     }
 });
 document.addEventListener('keyup', (e) => {
-    const prioritySelector = document.getElementById('priority-selector')
-    if(document.activeElement === input) {
+    const prioritySelector = document.getElementById('priority-selector');
+    const navigator = document.getElementById('navigator');
+    const currentInputNavigator = document.getElementById('current-input');
+    if (e.key === 'Escape') {
+        navigator.innerText = 'All';
+        pageClean();
+        return;
+    }
+    else if(document.activeElement === input) {
         showOnly();
         if (e.key === 'Enter') {
             addButton.click();
@@ -32,14 +40,15 @@ document.addEventListener('keyup', (e) => {
             prioritySelector.selectedIndex--;
             
         }
-    }
-    else if (e.key === 'Escape') {
-        commandInput.value= '';
-        input.focus();
-        return;
+        else {
+            currentInputNavigator.innerText = ' > '+input.value;
+            // showOnly();
+        }
     }
     else if (document.activeElement === commandInput && e.key === 'Enter') {
         const tasksInView =  document.querySelectorAll('.todo-container');
+        const navigator =  document.getElementById('navigator');
+        const currentInputNavigator = document.getElementById('current-input');
         switch (commandInput.value) {
             case ':s':
                 //sort the list
@@ -53,15 +62,14 @@ document.addEventListener('keyup', (e) => {
                 break;
             case ':mi':
                 //show all important tasks (as click on menu > important)
-                showOnly('important');
-                
+                navigator.innerText = 'important';
                 break;
             case ':mc':
-                showOnly('completed');
+                navigator.innerText = 'completed';
                 //show all checked/completed tasks (as click on menu > checked)
                 break;
             case ':md':
-                showOnly('deleted');
+                navigator.innerText = 'deleted';
                     //show all deleted tasks (as click on menu > deleted)
                 break;
             case ':c':
@@ -78,27 +86,51 @@ document.addEventListener('keyup', (e) => {
                 default:
                     break;
                 }
-                commandInput.value = '';
-                input.focus();
+                pageClean()
                 return;
     }
 })
 sortButton.addEventListener('click', sortList);
-document.addEventListener('click', (e)=> {
-    if (e.target.className === 'delete-button') {
-        deleteTasks(e.target.parentElement);
-    }
-    else if (e.target.className === 'checkbox') {
-        checkTasks(e.target);
-    }
-})
 
+menu.addEventListener('click', menuLinksHandler);
 
-addButton.addEventListener('click', (e) => {
-    if (input.value === '') {
+function menuLinksHandler(menuLink) {
+    if (menuLink.target.id === 'menu') {
         return;
     }
+    const navigator =  document.getElementById('navigator');
+    navigator.innerText = menuLink.target.innerText.toLowerCase();
+    pageClean();
+}
 
+function containerButtonsCallback(e) {
+    if (e.target.className === 'checkbox') {
+        const checkbox = e.target;
+        taskCompleter(checkbox);
+    }
+    else if(e.target.className === 'delete-button'){
+        deleteTasks(e.target.parentElement);
+    }
+
+}
+addButton.addEventListener('click', addTask);
+function addTask(valueToAdd) {
+    let newTaskString;
+    if (typeof(valueToAdd) === 'string') {
+        newTaskString = valueToAdd;
+    }
+    else {
+        newTaskString = input.value;
+    }
+
+    if (!newTaskString.trim()) {
+        alert('try to enter tasks you wish to remember');
+        return;
+    }
+    else if (newTaskString.includes(',')) {
+        addMultipleTasks(newTaskString);
+        return;
+    }
     //          create new task
     const newTaskpriority = document.getElementById('priority-selector');
     const newTaskStatus = 'relevant';
@@ -107,7 +139,7 @@ addButton.addEventListener('click', (e) => {
     const newTaskTime = new Date(temporaryDate).toISOString().slice(0, 19).replace('T', ' ');
     allTasks['my-todo'].push(
         {
-            text: input.value,
+            text: newTaskString,
             priority: newTaskpriority.value,
             date: newTaskTime,
             'data-status': newTaskStatus
@@ -117,17 +149,21 @@ addButton.addEventListener('click', (e) => {
         
         //      reset page
         updateCounter();
-        input.value = "";
-        input.focus();
-        const didItWork = setPersistent(API_KEY, allTasks);
-});
+        pageClean();
+        showOnly();
+        return setPersistent(API_KEY, allTasks);
+}
 
 function showOnly(showByStatus = 'relevant') {
+    const navigator = document.getElementById('navigator');
+    if (navigator.innerText !== '' && navigator.innerText !== 'All') {
+        showByStatus = navigator.innerText;
+    }
     const stringToFilter = input.value;
     if (showByStatus === 'important') {
         const filtered = allTasks['my-todo']
         .filter((item) => {
-        return item.priority > 2;
+        return item.priority > 2 && item.text.includes(stringToFilter);
         })
         list.replaceChildren();
         recreateView(filtered);
@@ -180,14 +216,14 @@ function recreateView(listToView = allTasks['my-todo']) {
         task.dataset['status'] = item['data-status']
         const trashSpan = createElementWithAttribute('span', 'className', 'delete-button');
         trashSpan.innerText = 'delete';
+        trashSpan.addEventListener( 'click', deleteTasks);
         const checkbox = createElementWithAttribute('input', 'type', 'checkbox');
         checkbox.className = 'checkbox';
-        
+        checkbox.addEventListener('click', taskCompleter);
         taskPriority.innerText = item.priority;
         taskCreationTime.innerText = item.date;
         taskText.innerText = item.text;
         task.append(checkbox, taskText, taskCreationTime,  taskPriority, trashSpan);
-        console.log(item['data-status']);
         if (item['data-status'] === 'completed') {
             checkbox.checked = true;
         }
@@ -199,97 +235,135 @@ function recreateView(listToView = allTasks['my-todo']) {
     }
   }
 
-function deleteTasks(tasks) {
-    if(tasks.length === undefined) {
-        if (tasks.dataset.status !== 'deleted') {
-            console.log(tasks.dataset.status);
+async function deleteTasks(stuffToDelete) {
+    let toStatus;
+    let checkboxHiddenToState;
+    let toButtonContent;
+    
+
+
+    if(stuffToDelete.length === undefined) {        // differ between single and multiple elements
+        let relevantTasks;
+        let container;
+        if (stuffToDelete.target) {
+            container = stuffToDelete.target.parentElement;
+        }
+        if (container.dataset.status !== 'deleted') {
+            toStatus = 'deleted';
+            checkboxHiddenToState = true;
+            toButtonContent = "Restore";
+        }
+        else if (container.dataset.status === 'deleted') {
+            toStatus = 'relevant';
+            checkboxHiddenToState = false;
+            toButtonContent = 'delete';
+        }
+            console.log(container.dataset.status);
             
-            tasks.dataset.status = 'deleted';
-            tasks.querySelector('.checkbox').hidden = true;
-            tasks.querySelector('.delete-button').innerText = 'Restore';
-            const deletedTask = allTasks['my-todo']
+            container.dataset.status = toStatus;
+            container.querySelector('.checkbox').hidden = checkboxHiddenToState;
+            container.querySelector('.delete-button').innerText = toButtonContent;
+            relevantTasks = allTasks['my-todo']
             .filter((item) => {
-                if(item.date === tasks.querySelector('.todo-created-at').innerText) {
-                    item['data-status'] = 'deleted';
+                if(item.date === container.querySelector('.todo-created-at').innerText) {
+                    item['data-status'] = toStatus;
                 }
                 return;
             });
+            container.hidden = true;
+            console.log(container.dataset.status);
+            // pageClean()
+            await setPersistent(API_KEY, allTasks);
+            showOnly();
+            // return;
         }
-        else if (tasks.dataset.status === 'deleted') {
+    //     for (const task of tasks) {
+    //         if (tasks.dataset.status !== 'deleted') {
+    //             tasks.dataset.status = 'deleted';
+    //             tasks.querySelector('.checkbox').hidden = true;
+    //             tasks.querySelector('.delete-button').innerText = 'Restore';
+    //             relevantTasks = allTasks['my-todo']
+    //             .filter((item) => {
+    //                 if(item.date === tasks.querySelector('.todo-created-at').innerText){
+    //                     item['data-status'] = 'relevant';
+    //                 }
+    //                 return;
+    //         });
+    //     }
+    //     else if (tasks.dataset.status === 'deleted') {
             
-            tasks.dataset.status = 'relevant';
-            tasks.querySelector('.checkbox').hidden = false;
-            tasks.querySelector('.delete-button').innerText = 'delete';
-            const deletedTask = allTasks['my-todo']
-            .filter((item) => {
-                if(item.date === tasks.querySelector('.todo-created-at').innerText) {
-                    item['data-status'] = 'relevant';
-                }
-                return;
-            });
-        }
-            // recreateView();
-            // updateCounter();
-            input.value = '';
-            input.focus();
-            setPersistent(API_KEY, allTasks);
+    //         tasks.dataset.status = 'relevant';
+    //         tasks.querySelector('.checkbox').hidden = false;
+    //         tasks.querySelector('.delete-button').innerText = 'delete';
+    //         relevantTasks = allTasks['my-todo']
+    //         .filter((item) => {
+    //             if(item.date === tasks.querySelector('.todo-created-at').innerText){
+    //                 item['data-status'] = 'relevant';
+    //             }
+    //             return;
+    //         });
+    // }
+    // list.replaceChildren()
+    // recreateView(relevantTasks);
+    // pageClean();
+    // setPersistent(API_KEY, allTasks);
+
+// }
+}
+
+//      consider to unite taskCompleter and deleteTasks functions
+function dataStatusChanger(elementOrObjectType, elementOrObject) {
+    if (elementOrObjectType === 'element') {
+        console.log(elementOrObject);
+        if (elementOrObject.parentElement.dataset.status === 'completed') {
+            elementOrObject.parentElement.dataset.status = 'relevant';
             return;
         }
-        for (const task of tasks) {
-            if (tasks.dataset.status !== 'deleted') {
-            
-                tasks.dataset.status = 'deleted';
-                tasks.querySelector('.checkbox').hidden = true;
-                tasks.querySelector('.delete-button').innerText = 'Restore';
-                const deletedTask = allTasks['my-todo']
-                .filter((item) => {
-                    if(item.date === tasks.querySelector('.todo-created-at').innerText){
-                        item['data-status'] = 'deleted';
-                    }
-                    return;
-            });
-        }
-        else if (tasks.dataset.status === 'deleted') {
-            
-            tasks.dataset.status = 'relevant';
-            tasks.querySelector('.checkbox').hidden = false;
-            tasks.querySelector('.delete-button').innerText = 'delete';
-            const deletedTask = allTasks['my-todo']
-            .filter((item) => {
-                if(item.date === tasks.querySelector('.todo-created-at').innerText){
-                    item['data-status'] = 'relevant';
-                }
-                return;
-            });
-    }
-    // list.replaceChildren()
-    // recreateView();
-    // updateCounter();
-    input.value = '';
-    input.focus();
-    setPersistent(API_KEY, allTasks);
-
-}
-}
-
-//      consider to unite checkTasks and deleteTasks functions
-function checkTasks(tasksToCheck, status) {
-    tasksToCheck.parentElement.dataset.status = 'completed';
-    const bla = allTasks['my-todo']
-        .filter((item) => {
-            console.log(item.date, tasksToCheck.parentElement.querySelector('.todo-created-at').innerText);
-        if(item.date === tasksToCheck.parentElement.querySelector('.todo-created-at').innerText){
-            if(item['data-status'] === 'completed'){
-                item['data-status'] = 'relevant';
-                return;
-            }
-            else if(item['data-status'] === 'relevant') {
-            item['data-status'] = 'completed';
-            }
-        }
+        elementOrObject.parentElement.dataset.status = 'completed';
         return;
+    }
+    if(elementOrObject['data-status'] === 'completed'){
+        elementOrObject['data-status'] = 'relevant';
+        return;
+    }
+    else if(elementOrObject['data-status'] === 'relevant') {
+    elementOrObject['data-status'] = 'completed';
+    }
+}
+function taskCompleter(task) {
+    if(task.target){
+        task= task.target;
+    }
+    console.log("im here!", task.target);
+    dataStatusChanger('element', task);
+    console.log("sadf");
+    const currentTaskObj = allTasks['my-todo']
+        .filter((item) => {
+        if(item.date === task.parentElement.querySelector('.todo-created-at').innerText){
+            dataStatusChanger('object', item)
+            return true;
+        }
     });
+    pageClean();
+    setPersistent(API_KEY, allTasks);
+}
+function pageClean() {
+    const currentInputNavigator = document.getElementById('current-input');
+    currentInputNavigator.innerText = '';
+    commandInput.value= '';
     input.value = '';
     input.focus();
-    setPersistent(API_KEY, allTasks);
+    showOnly();
+}
+
+ // async to avoid breaking network flow.
+async function addMultipleTasks(multipleValue) {
+    const seperatedValues = multipleValue.split(',');
+    for (const value of seperatedValues) {
+        await addTask(value.trim());   
+    }
+}
+
+function menuHandler(params) {
+    console.log(" i am not defined!");
 }

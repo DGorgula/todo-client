@@ -45,10 +45,12 @@ afterEach(async () => {
   await page.waitForSelector('body #add-button');
   await page.click('body #add-button');
   await page.waitFor(1500);
-
+  
   const tasks = await page.$$('.todo-text');
   const first = await (await tasks[0].getProperty("innerText")).jsonValue();
+  await page.waitFor(1000);
   const second = await (await tasks[1].getProperty("innerText")).jsonValue();
+  await page.waitFor(1000);
   const third = await (await tasks[2].getProperty("innerText")).jsonValue();
   expect(first).toBe("first");
   expect(second).toBe("second");

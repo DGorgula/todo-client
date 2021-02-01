@@ -46,6 +46,7 @@ async function updateList(allTasks, list){
   // console.log(relevantTasks(), allTasks['my-todo'][0]['data-status']);
   allTasks['my-todo'] = jsonedList['my-todo'];
   recreateView(allTasks['my-todo']);
+  // showOnly();
   updateCounter();
 }
 

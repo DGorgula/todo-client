@@ -9,11 +9,12 @@
   </head>
   <body>
     <nav id="menu">
-      <a href="#" onclick="showOnly('important')" class="nav-link" id="important-tasks">Important</a>
-      <a href="#" onclick="showOnly('completed')" class="nav-link" id="completed-tasks">Completed</a>
-      <a href="#" onclick="showOnly('deleted')" class="nav-link" id="deleted-tasks">Deleted</a>
+      <a href="#" class="nav-link" id="important-tasks">Important</a>
+      <a href="#" class="nav-link" id="completed-tasks">Completed</a>
+      <a href="#" class="nav-link" id="deleted-tasks">Deleted</a>
     </nav>
     <section id="Control">
+      <p> > <span id="navigator">All</span><span id="current-input"></span></p>
       <span id="counter"></span>
       <button id="sort-button">Sort</button>
       <button id="delete-all-button" onclick="deleteTasks(list.children)">Delete All</button>
@@ -28,6 +29,7 @@
       <button id="add-button">Add</button>
     </section>
     <section id="View">
+      </div>
     </section>
     <input type="text" placeholder="press :k for all 'Keyboard-Mode' commands" id="command-input">
   </body>
