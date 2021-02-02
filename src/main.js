@@ -1,11 +1,16 @@
-// list.replaceChildren();   important code for recreateView()
-//      here the code begin to run!
+
+//      Welcome to Whatodo Code!
+//    through the code there are lots of focus on the input, it's part of a feature I made.
+
+// Get Request to pull the data from JsonBin
 const input = document.getElementById('text-input');
-const commandInput = document.getElementById('command-input');
 input.focus();
 const allTasks = {'my-todo': []};
 const list = document.getElementById('View');
 updateList(allTasks, list);
+
+//      first declerations
+const commandInput = document.getElementById('command-input');
 const addButton = document.getElementById('add-button');
 const sortButton = document.getElementById('sort-button');
 const menu = document.getElementById('menu');
@@ -214,6 +219,7 @@ function showOnly(showByStatus = 'relevant') {
 function sortList() {
     const fragment = document.createDocumentFragment();
     const listItems = Array.from(list.children);
+    console.log(listItems);
     const orderedListItems = listItems
     .sort((firstItem, secondItem)=> {
         const firstPriorityItem = firstItem.querySelector('.todo-priority').innerText;
@@ -239,13 +245,14 @@ function createElementWithAttribute(element, attributeType, attributValue ) {
 
 function recreateView(listToView = allTasks['my-todo']) {
     for (const item of listToView ) {
+        const line = document.createElement('hr');
         const task = createElementWithAttribute('div', 'className', 'todo-container');
         const taskPriority = createElementWithAttribute('div', 'className', 'todo-priority');
         const taskCreationTime = createElementWithAttribute('div', 'className', 'todo-created-at');
         const taskText = createElementWithAttribute('div', 'className', 'todo-text');
         task.dataset['status'] = item['data-status']
         const trashSpan = createElementWithAttribute('span', 'className', 'delete-button');
-        trashSpan.innerText = 'delete';
+        trashSpan.value = 'delete';
         trashSpan.addEventListener( 'click', deleteTasks);
         const checkbox = createElementWithAttribute('input', 'type', 'checkbox');
         checkbox.className = 'checkbox';
@@ -259,7 +266,7 @@ function recreateView(listToView = allTasks['my-todo']) {
         }
         else if (item['data-status'] === 'deleted') {
             checkbox.hidden = true;
-            trashSpan.innerText = 'Restore';
+            trashSpan.value = 'Restore';
         }
         list.append(task);
     }

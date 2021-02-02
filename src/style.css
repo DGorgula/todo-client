@@ -5,6 +5,7 @@
     --heading-color: #ffece8;
     --background-color: #fafafa;
     --border: 0.05rem solid rgb(211, 211, 211);
+    --big-text-color: rgb(211, 211, 211);
 }
 
 * {
@@ -22,6 +23,7 @@ body {
     display: grid;
     grid-template-columns: repeat(20, 1fr);
     grid-template-rows: repeat(12, 1fr);
+    font-family: 'Sriracha', cursive;
 }
 
 /* CSS for Menu */
@@ -86,13 +88,18 @@ body {
     height: 2rem;
 }
 
-/*      main CSS         */
+/*      Main CSS         */
 main {
     grid-column: 6/21;
     grid-row: 2/12;
     width: 100%;
+    border: var(--border);
+    border-bottom: none;
+    /* border-bottom-left-radius: var(--corners); */
+    border-top-left-radius: var(--corners);
 }
 
+/*      Control CSS      */
 #Control {
     display: flex;
     align-items: center;
@@ -105,10 +112,13 @@ main {
     font-size: var(--heading-size);
     justify-content: space-evenly;
 }
+
+/*      Priority Selector CSS        */
 #selector-span {
     display: flex;
     align-items: center;
 }
+
 #priority-selector {
     font-size: 2rem;
     text-align: left;
@@ -116,16 +126,19 @@ main {
     border: none;
     background-color: transparent;
 }
+
 #selector-svg {
     width: 2rem;
     height: 2rem;
 }
 
+/*       Text-Input CSS         */
 #input-span {
     position: relative;
 }
 #input-text{
     width: 100%;
+    font-family: inherit;
 }
 #add-button {
     margin: auto 0;
@@ -134,10 +147,11 @@ main {
     top:0.005rem;
     right: 0rem;
 }
+/*      Delete All button by CSS         */
 #delete-all-button{
     grid-column: 1/4;
 }
-
+/*      Sort Button CSS         */
 #sort-button {
     width: 2rem;
     height: 2rem;
@@ -145,19 +159,58 @@ main {
     top: 3rem;
     filter: brightness(30%);
 }
+
+/*      Keyboard Mode CSS        */
 #command-input {
+    position: fixed;
+    bottom: 0;
+    left: 2rem;
     grid-column: 1/4;
     grid-row: 12;
+    border: none;
+    font-size: 3rem;
+    opacity: 30%;
+}
+.keyset {
+    display: inline-block;
+    padding: 1rem;
+    margin-left: 2rem;
+}
+#keyboard-mode-header {
+    display: flex;
+    justify-content: center;
+    font-size: var(--heading-size);
+}
+#keyboard-mode-content {
+    display: flex;
+    padding: 2rem 0;
+    /* justify-content: space-around; */
+    flex-direction: column;
+    align-content: space-around;
+    /* grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr); */
 }
 
-#keyboard-mode {
-    grid-column: 2/3;
-    grid-row: 4/10;
+#keyboard-mode-keyset {
+    /* grid-column: 1/20;
+    grid-row: 1/12;  */
+    position: fixed;
+    top:  15%;
+    left:  15%;
+    width: 70%;
+    height: 70%;
+    /* margin-top:; */
+    background-color: var(--theme-color);
+    margin 0 auto;
+    justify-content: center;
+    align-content: center;
+    margin 0 auto;
+    box-shadow: 0 2rem 3rem black;
 }
 
 
 
-/*      navigator CSS        */
+/*      Navigator CSS        */
 #navigator-container {
     grid-column: 1/21;
     grid-row: 1;
@@ -168,4 +221,45 @@ main {
 
 /*      counter CSS      */
 #counter {
+    grid-column: 2/4;
+    grid-row: 10/12;
+    display: flex;
+    font-weight: bolder;
+    justify-content:center;
+    font-size: 6rem;
+}
+
+.todo-container {
+    padding: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+.todo-text {
+    display: inline-block;
+    
+}
+.todo-priority {
+    display: inline-block;
+    
+}
+.todo-date {
+    display: inline-block;
+    
+}
+#myButton {
+    width: 20px;
+  height: 20px;
+  border: 6px, solid rgb(22, 25, 175);
+  border-radius: 50%;
+}
+
+.delete-button::before {
+    content:url(./assets/unitrash.svg);
+}
+
+hr {
+    width: 90%;
+    margin: 0 auto;
+    border: var(--border)
 }

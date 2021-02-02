@@ -12,7 +12,6 @@ async function getPersistent(key) {
   const texted = await respond.text();
   const jsoned = JSON.parse(texted);
   const content = jsoned['record'];
-  // orderList(content);
   
   return content;
 
