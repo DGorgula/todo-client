@@ -22,7 +22,7 @@ document.addEventListener('keydown', (e) => {
 deleteAllButton.addEventListener('click', deleteOrRestoreAll);
 
 function deleteOrRestoreAll(event) {
-    let deleteButtonText = event.target.innerText;
+    let deleteButtonText = event.target.dataset.action;
     const editedDeleteButtonText = deleteButtonText.toLowerCase().slice(0,7).trim();
     if (list.children.length <= 0) {
         alert(`There's nothing to ${editedDeleteButtonText}..`);
@@ -34,10 +34,10 @@ function deleteOrRestoreAll(event) {
     if(deleteButtonText === 'Delete All') {
         console.log(action);
 
-        event.target.innerText = 'Restore All';
+        event.target.dataset.action = 'Restore All';
     }
     else{
-        event.target.innerText = 'Delete All';
+        event.target.dataset.action = 'Delete All';
     }
     cleanPage();
 }

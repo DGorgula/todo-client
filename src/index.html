@@ -70,18 +70,27 @@
 <main>
   <section id="Control">
     
-    <button id="sort-button">Sort</button>
-    <button id="delete-all-button">Delete All</button>
-    <input type="text" placeholder="Item to Add" id="text-input">
-    <select name="" id="priority-selector">
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-      <option value="5">5</option>
-    </select>
-    <button id="add-button">Add</button>
-    
+    <!-- <button id="sort-button">Sort</button> -->
+    <!-- <button id="delete-all-button">Delete All</button> -->
+    <img id="delete-all-button" data-action="delete" src="./assets/full-trash.png" width="32" alt="" srcset="">
+    <span id="input-span">
+
+      <input type="text" placeholder="Item to Add" id="text-input">
+      <button id="add-button">+</button>
+    </span>
+      <div id="selector-span">
+
+      <?xml version="1.0" ?><svg  id="selector-svg" height="1792" viewBox="0 0 1792 1792" width="1792" xmlns="http://www.w3.org/2000/svg"><path d="M1408 1088q0 26-19 45l-448 448q-19 19-45 19t-45-19l-448-448q-19-19-19-45t19-45 45-19h896q26 0 45 19t19 45zm0-384q0 26-19 45t-45 19h-896q-26 0-45-19t-19-45 19-45l448-448q19-19 45-19t45 19l448 448q19 19 19 45z"/></svg>
+      <select name="" id="priority-selector">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </div>
+
+    <?xml version="1.0" ?><svg id="sort-button" fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M3 4H16M3 8H12M3 12H9M13 12L17 8M17 8L21 12M17 8V20" stroke="#4A5568" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
     
   </section>
   <section id="View">

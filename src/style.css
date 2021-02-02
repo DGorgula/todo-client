@@ -88,21 +88,63 @@ body {
 
 /*      main CSS         */
 main {
-    grid-column: 6/20;
+    grid-column: 6/21;
     grid-row: 2/12;
+    width: 100%;
 }
 
 #Control {
-    /* margin: 0 4vw 0 0;
+    display: flex;
+    align-items: center;
     padding: 0.7rem 0;
     width: 100%;
     background-color: var(--theme-color);
     border-top-left-radius: var(--corners);
     text-align: center;
     color: var(--heading-color);
-    font-size: var(--heading-size); */
+    font-size: var(--heading-size);
+    justify-content: space-evenly;
+}
+#selector-span {
+    display: flex;
+    align-items: center;
+}
+#priority-selector {
+    font-size: 2rem;
+    text-align: left;
+    appearance: none;
+    border: none;
+    background-color: transparent;
+}
+#selector-svg {
+    width: 2rem;
+    height: 2rem;
 }
 
+#input-span {
+    position: relative;
+}
+#input-text{
+    width: 100%;
+}
+#add-button {
+    margin: auto 0;
+    background-color: transparent;
+    border:none;
+    top:0.005rem;
+    right: 0rem;
+}
+#delete-all-button{
+    grid-column: 1/4;
+}
+
+#sort-button {
+    width: 2rem;
+    height: 2rem;
+    right: 1rem;
+    top: 3rem;
+    filter: brightness(30%);
+}
 #command-input {
     grid-column: 1/4;
     grid-row: 12;
@@ -117,7 +159,7 @@ main {
 
 /*      navigator CSS        */
 #navigator-container {
-    grid-column: 1/4;
+    grid-column: 1/21;
     grid-row: 1;
     font-size: 4rem;
     opacity: 40%;
@@ -126,6 +168,4 @@ main {
 
 /*      counter CSS      */
 #counter {
-    /* grid-column: 3;
-    grid-row: 10/11; */
 }

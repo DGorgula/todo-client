@@ -15,9 +15,9 @@ let browser;
 describe(projectName, () => {
 beforeAll(async () => {
   browser = await puppeteer.launch({
-      headless: false,
+      // headless: false,
       args: ["--disable-web-security"],
-      slowMo: 50
+      // slowMo: 50
   });
   page = await browser.newPage();
 });

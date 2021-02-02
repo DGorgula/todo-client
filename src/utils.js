@@ -37,13 +37,13 @@ body: JSON.stringify(data)};
 
 //maybe should run this without a function in the main.
 async function updateList(allTasks, list){
-try {
+// try {
   const importedList = await getPersistent(API_KEY);
   allTasks['my-todo'] = importedList["my-todo"];
   //  jsonedList['my-todo'];
-} catch(e) {
-  alert('There was a problem getting data from the server,\n Please try to reload.\nThe specific error message is:\n' + e);
-  }
+// } catch(e) {
+  // alert('There was a problem getting data from the server,\n Please try to reload.\nThe specific error message is:\n' + e);
+  // }
   recreateView(allTasks['my-todo']);
   // showOnly();
   updateCounter();
