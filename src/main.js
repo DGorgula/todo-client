@@ -365,15 +365,7 @@ async function deleteTasks(tasksToDelete, action) {
       }
     }
   }
-  try {
-    await setPersistent(API_KEY, allTasks);
-} catch (e) {
-    alert(
-        "There was a problem sending data to the server,\n Please try to reload and repeat your last actions.\nThe specific error message is:\n" +
-        e
-        );
-    }
-  showOnly();
+    setPersistent(API_KEY, allTasks);
 }
 
 async function completeTasks(tasksToComplete, action) {
