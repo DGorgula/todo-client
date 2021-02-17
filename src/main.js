@@ -345,7 +345,8 @@ function recreateView(listToView = allTasks["my-todo"]) {
   }
 }
 
-async function deleteTasks(tasksToDelete, loadingDiv, action) {
+function deleteTasks(tasksToDelete, loadingDiv, action) {
+  toggleLoadingScreen(loadingDiv)
     if (action) {
         if (tasksToDelete.length === undefined) {
             // differ between single and multiple
@@ -370,7 +371,9 @@ async function deleteTasks(tasksToDelete, loadingDiv, action) {
     setPersistent(API_KEY, loadingDiv, allTasks);
 }
 
-async function completeTasks(tasksToComplete, action) {
+function completeTasks(tasksToComplete, loadingDiv, action) {
+  toggleLoadingScreen(loadingDiv)
+
     if (action) {
         if (tasksToComplete.length === undefined) {
             // differ between single and multiple
@@ -413,19 +416,19 @@ function dataStatusChanger(elementOrObjectType, elementOrObject) {
 }
 }
 function completeTask(task) {
-    if (task.target) {
-      task = task.target;
-    }
-    const taskDate = task.closest('.todo-container').querySelector('.todo-created-at');
+  if (task.target) {
+    task = task.target;
+  }
+  const taskDate = task.closest('.todo-container').querySelector('.todo-created-at');
   dataStatusChanger("element", task);
   const currentTaskObj = allTasks["my-todo"].filter((item) => {
-      if (item.date === taskDate.innerText) {
-        dataStatusChanger("object", item);
-        return true;
+    if (item.date === taskDate.innerText) {
+      console.log("lskbfmf");
+      dataStatusChanger("object", item);
+      return true;
     }
 });
   cleanPage();
-  setPersistent(API_KEY, loadingDiv, allTasks);
 }
 function cleanPage() {
   const keysetDiv = document.getElementById("keyboard-mode-keyset");
@@ -440,15 +443,28 @@ function cleanPage() {
 }
 
 // async to avoid breaking network flow.
-async function addMultipleTasks(multipleValue) {
+function addMultipleTasks(multipleValue, loadingDiv) {
+  realLoadingDiv = document.getElementById('loading-div');
+    toggleLoadingScreen(loadingDiv);
     const seperatedValues = multipleValue.split(",");
+    const isLastValue = true;
+    const isMultipleTasks = true;
+    const lastValueIndex = seperatedValues.length-1;
     for (const value of seperatedValues) {
-      await addTask(value.trim());
+      if (!value.trim()) {
+        continue;
+      }
+      if (lastValueIndex === seperatedValues.indexOf(value)) {
+        addTask(value.trim(), isLastValue, isMultipleTasks);
+      }
+      else {
+        addTask(value.trim(), !isLastValue, isMultipleTasks);
+      }
     }
-}
-
-function deleteOrRestoreTask(task, action) {
-    if (task.length === 0) {
+    }
+    
+    function deleteOrRestoreTask(task, action) {
+      if (task.length === 0) {
         return;
     }
     if (action === "delete") {
@@ -533,23 +549,26 @@ function menuLinksHandler(menuLink) {
       deleteTasks(e.target.parentElement, loadingDiv);
   }
 }
-function addTask(valueToAdd) {
-  toggleLoadingScreen(loadingDiv)
-    const newTaskpriority = document.getElementById("priority-selector").value;
+function addTask(valueToAdd, isLastValue = true, isMultipleTasks = false) {
+  const loadingDiv = document.getElementById('loading-div');
+  const newTaskpriority = document.getElementById("priority-selector").value;
   let newTaskString;
   if (typeof valueToAdd === "string") {
-      newTaskString = valueToAdd;
+    newTaskString = valueToAdd;
   } else {
-      newTaskString = input.value;
-    }
-    
+    newTaskString = input.value;
+  }
+  
   if (!newTaskString.trim()) {
     alert("try to enter tasks you wish to remember");
     return;
   } else if (newTaskString.includes(",")) {
-      addMultipleTasks(newTaskString);
+    addMultipleTasks(newTaskString, loadingDiv);
     return;
-}
+  }
+  else if (!isMultipleTasks) {
+    toggleLoadingScreen(loadingDiv);
+  }
   //          create new task
   const newTaskStatus = "relevant";
   let temporaryDate = new Date();
@@ -570,7 +589,7 @@ function addTask(valueToAdd) {
   updateCounter();
   cleanPage();
   showOnly();
-  setPersistent(API_KEY, loadingDiv, allTasks);
+  setPersistent(API_KEY, loadingDiv, allTasks, isLastValue);
 
 }
 
@@ -608,7 +627,7 @@ function completeAll(tasks) {
     alert(`There's nothing to ${editedCompleteButtonText}..`);
     return;
   }
-  completeTasks(itemsToComplete, editedCompleteButtonText);
+  completeTasks(itemsToComplete, loadingDiv, editedCompleteButtonText);
 }
 
 function createRandomColor() {

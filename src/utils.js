@@ -24,7 +24,7 @@ function getPersistent(key, loadingDiv) {
 
 // Saves the given data into persistent storage by the given key.
 // Returns 'true' on success.
-function setPersistent(key, loadingDiv, data) {
+function setPersistent(key, loadingDiv, data, isLastValue = false) {
   const request = {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' , 'X-Master-Key': key
@@ -32,7 +32,10 @@ function setPersistent(key, loadingDiv, data) {
   body: JSON.stringify(data)};
   fetch("https://api.jsonbin.io/v3/b/601d120506934b65f52ebb62", request)
   .then((response) => {
-    toggleLoadingScreen(loadingDiv);
+    if (isLastValue) {
+      toggleLoadingScreen(loadingDiv)
+    }
+
     showOnly();
   }
   )
