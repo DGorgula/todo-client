@@ -6,7 +6,9 @@ const input = document.getElementById("text-input");
 input.focus();
 const allTasks = { "my-todo": [] };
 const list = document.getElementById("View");
-updateList(allTasks, list);
+const loadingDiv = document.getElementById("loading-div");
+getPersistent(API_KEY, loadingDiv);
+// updateList(allTasks, list);
 
 //      first declerations
 const commandInput = document.getElementById("command-input");
@@ -302,7 +304,7 @@ function recreateView(listToView = allTasks["my-todo"]) {
     const mainData = createElementWithAttribute("section", "className", "main-data");
     const extendedData = createElementWithAttribute("section", "className", "extended-data");
     trashSpan.value = "delete";
-    trashSpan.addEventListener("click", deleteTasks);
+    trashSpan.addEventListener("click", loadingDiv, deleteTasks);
     checkbox.className = "checkbox";
     checkbox.addEventListener("click", completeTask);
     // const randomColor = createRandomColor();
@@ -343,7 +345,7 @@ function recreateView(listToView = allTasks["my-todo"]) {
   }
 }
 
-async function deleteTasks(tasksToDelete, action) {
+async function deleteTasks(tasksToDelete, loadingDiv, action) {
     if (action) {
         if (tasksToDelete.length === undefined) {
             // differ between single and multiple
@@ -365,7 +367,7 @@ async function deleteTasks(tasksToDelete, action) {
       }
     }
   }
-    setPersistent(API_KEY, allTasks);
+    setPersistent(API_KEY, loadingDiv, allTasks);
 }
 
 async function completeTasks(tasksToComplete, action) {
@@ -390,15 +392,7 @@ async function completeTasks(tasksToComplete, action) {
       }
     }
   }
-  try {
-    await setPersistent(API_KEY, allTasks);
-} catch (e) {
-    alert(
-        "There was a problem sending data to the server,\n Please try to reload and repeat your last actions.\nThe specific error message is:\n" +
-        e
-        );
-    }
-  showOnly();
+  setPersistent(API_KEY, loadingDiv, allTasks);
 }
 //      consider to unite taskCompleter and deleteTasks functions
 function dataStatusChanger(elementOrObjectType, elementOrObject) {
@@ -431,14 +425,7 @@ function completeTask(task) {
     }
 });
   cleanPage();
-  try {
-    setPersistent(API_KEY, allTasks);
-} catch (e) {
-    alert(
-        "There was a problem sending data to the server,\n Please try to reload and repeat your last actions.\nThe specific error message is:\n" +
-        e
-        );
-    }
+  setPersistent(API_KEY, loadingDiv, allTasks);
 }
 function cleanPage() {
   const keysetDiv = document.getElementById("keyboard-mode-keyset");
@@ -501,7 +488,7 @@ function deleteOrRestoreAll(event) {
     return;
 }
   const action = editedDeleteButtonText;
-  deleteTasks(itemsToDeleteOrRestore, action);
+  deleteTasks(itemsToDeleteOrRestore, loadingDiv, action);
   // deleteAllToRestoreAllAndReversed(event.target);
   cleanPage();
 }
@@ -543,10 +530,11 @@ function menuLinksHandler(menuLink) {
         const checkbox = e.target;
         completeTask(checkbox);
   } else if (e.target.className === "delete-button") {
-      deleteTasks(e.target.parentElement);
+      deleteTasks(e.target.parentElement, loadingDiv);
   }
 }
 function addTask(valueToAdd) {
+  toggleLoadingScreen(loadingDiv)
     const newTaskpriority = document.getElementById("priority-selector").value;
   let newTaskString;
   if (typeof valueToAdd === "string") {
@@ -582,14 +570,8 @@ function addTask(valueToAdd) {
   updateCounter();
   cleanPage();
   showOnly();
-  try {
-      return setPersistent(API_KEY, allTasks);
-  } catch (e) {
-      alert(
-      "There was a problem sending data to the server,\n Please try to reload and repeat your last actions.\nThe specific error message is:\n" +
-      e
-    );
-}
+  setPersistent(API_KEY, loadingDiv, allTasks);
+
 }
 
 
@@ -636,4 +618,14 @@ function createRandomColor() {
   const randomColor = `${redHue}, ${greenHue}, ${blueHue}`;
 
   return randomColor;
+}
+function toggleLoadingScreen(loadingDiv) {
+  
+  if (!loadingDiv.classList.contains('show-loading-div')) {
+    loadingDiv.classList.add('show-loading-div');
+    return;
+  }
+  else {
+    loadingDiv.classList.remove('show-loading-div');
+  }
 }
