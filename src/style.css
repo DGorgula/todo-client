@@ -213,7 +213,7 @@ a {
 #selector-span {
     display: flex;
     position: absolute;
-    right: 1rem;
+    right: 3rem;
     align-items: center;
     width: fit-content;
 }
@@ -465,6 +465,9 @@ hr {
     }
     #input-span {
         margin-left: 1rem;
+    }
+    #selector-span {
+        right: 1.5rem;
     }
 }
     @media(max-width: 700px) {
