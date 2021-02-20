@@ -14,6 +14,7 @@
     margin: 0;
     padding: 0;
 }
+
 body {
     width: 100%;
     height: 100%;
@@ -22,9 +23,6 @@ body {
     font-family:Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-#loading-div {
-    
-}
 .show-loading-div {
     display: flex;
     margin-top: -1rem;
@@ -41,8 +39,6 @@ body {
 #dots-div {
     margin: 0;
     padding: 0;
-    /* width: 80%; */
-    /* height: 20%; */
     opacity: 100%;
     z-index: 5;
     display: flex;
@@ -161,12 +157,11 @@ a {
 #content {
     grid-column: 5/21;
     grid-row: 2/15;
-    /* grid-row-end: auto; */
     border-right: var(--border);
 }
+
 #View {
     margin: 0 2rem 3rem 2rem;
-    /* min-height:50%; */
 }
 
 .checkbox {
@@ -174,6 +169,7 @@ a {
     content: url(./assets/empty-checkbox.svg);
     appearance: none;
 }
+
 .checked {
     content: url(./assets/checked-checkbox.svg);
 }
@@ -196,6 +192,7 @@ a {
     justify-content: space-between;
     z-index: 1;
 }
+
 #menu-button {
     display: none;
     background-image: url(./assets/menu-button.svg);
@@ -204,6 +201,7 @@ a {
     height: 1.6rem;
     margin-left: 1.5rem;
 }
+
 #options {
     display: flex;
     align-items: center;
@@ -214,8 +212,10 @@ a {
 /*      Priority Selector CSS        */
 #selector-span {
     display: flex;
+    position: absolute;
+    right: 1rem;
     align-items: center;
-    margin-right: 1rem;
+    width: fit-content;
 }
 
 #priority-selector {
@@ -227,6 +227,7 @@ a {
     border: none;
     background-color: transparent;
 }
+
 #priority-selector:focus {
     border: none;
     outline: none;
@@ -265,15 +266,16 @@ a {
 
 #add-button {
     background-color: transparent;
-    /* border:none; */
     margin-right: 0.7rem;
 }
+
 /*      Delete All button by CSS         */
 #delete-all-button{
     content: url("./assets/trash-full1.svg");
     width: 32px;
     margin-left: 1rem;
 }
+
 #delete-all-button[data-action= "restore"] {
     content: url(./assets/restore-all.svg);
 }
@@ -282,10 +284,12 @@ a {
     content: url("./assets/checked-checkbox.svg");
     width: 32px;
 }
+
 #complete-all-button[data-action= "uncheck"] {
     content: url("./assets/uncheck-checkbox.svg");
     width: 32px;
 }
+
 /*      Sort Button CSS         */
 #sort-button {
     margin-left: 1rem;
@@ -293,7 +297,6 @@ a {
     height: 2rem;
     right: 1rem;
     top: 3rem;
-    /* filter: brightness(30%); */
 }
 
 /*      Keyboard Mode CSS        */
@@ -312,23 +315,27 @@ a {
     background: rgb(255,255,255);
     background: linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.3) 100%); 
 }
+
 #command-input:focus {
     background: none;
     font-weight: bold;
     -webkit-text-fill-color:black;
     opacity: 100%;
 }
+
 .keyset {
     display: inline-block;
     padding: 1rem;
     margin-left: 2rem;
 }
+
 #keyboard-mode-header {
     display: flex;
     justify-content: center;
     margin-top: 2rem;
     font-size: var(--heading-size);
 }
+
 #keyboard-mode-content {
     display: flex;
     padding: 2rem 0;
@@ -349,8 +356,6 @@ a {
     box-shadow: 0 2rem 3rem black;
 }
 
-
-
 /*      Navigator CSS        */
 #navigator-container {
     grid-column: 5/21;
@@ -363,11 +368,11 @@ a {
     font-weight: bold;
 }
 
-/*      counter CSS      */
 .counter {
     color: var(--big-text-color);
     padding-left: 0.5rem;
 }
+
 #todo-tasks {
     margin-top: 2rem;
 }
@@ -386,6 +391,7 @@ a {
     justify-content: space-between;
     align-items: center;
 }
+
 .extended-data {
     pointer-events: none;
     display: none;
@@ -393,10 +399,10 @@ a {
     align-items: center;
 }
 
-
 .in-choice {
     background-color: #dc4c3fb7;
 }
+
 .current, .mouse-current {
     background-color:#dc4c3f7a;
 }
@@ -407,29 +413,23 @@ a {
     overflow: hidden;
     text-overflow: clip;
 }
+
 .todo-priority {
-    /* display: inline-block; */
     padding-left: 0.5rem;
     
 }
+
 .todo-created-at {
     opacity: 40%;
 }
 
-/* .delete-button {
-    
-} */
-
 .delete-button::before {
-    /* width: 0.3rem; */
     pointer-events: visibleFill;
     content:url(./assets/trash5.svg);
     stroke: var(--big-text-color);
     padding-left: 0.5rem;
 }
 .deleted {
-    /* background-color: blue; */
-    /* width: 0.3rem; */
     pointer-events: visibleFill;
     padding-left: 0.5rem;
     content: url(./assets/restore3.svg);
@@ -446,13 +446,6 @@ hr {
     }
     #menu {
         grid-column: 1/5;
-        /* width: 10rem; */
-    }
-    #content {
-     /* grid-column: 4/21; */
-     /* grid-column:span; */
-     /* width: 100%; */
-     /* margin-left: -1rem; */
     }
     #navigator-container {
         margin-left: none;
@@ -460,7 +453,6 @@ hr {
     .navigation-div {
         display: flex;
         justify-content: center;
-        /* padding-left: 0; */
 
     }
     .navigation-link {
@@ -481,8 +473,6 @@ hr {
         margin: 0;
     }
     #Control {
-        /* display: block; */
-        /* position: absolute; */
         border-top-left-radius: 0;
         border-top-right-radius: 0;
         z-index: 2;
@@ -493,7 +483,6 @@ hr {
     #menu {
         display: none;
         position: fixed;
-        /* margin-top: 1rem; */
         width: 100%;
         height: fit-content;
         justify-content: center;
@@ -520,9 +509,7 @@ hr {
         justify-content: center; 
     }
     .navigation-link {
-        /* width: 100%; */
         border-top: var(--border);
-        /* padding:1rem auto; */
         text-align: center;
         z-index: 2;
     }
@@ -531,6 +518,7 @@ hr {
     }
     #input-span {
         margin-left: 1rem;
+        max-width: 50%;
     }
     #command-input {
         display: none;
