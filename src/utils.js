@@ -16,7 +16,8 @@ function getPersistent(key, loadingDiv) {
       toggleLoadingScreen(loadingDiv);
       // loadingDiv.classList.remove('show-loading-div');
       allTasks['my-todo'] = response.record["my-todo"];
-      recreateView(allTasks['my-todo']);
+      // recreateView(allTasks['my-todo']);
+      showOnly();
       updateCounter();
   })
 }) )
