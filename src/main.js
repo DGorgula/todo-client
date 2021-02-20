@@ -15,6 +15,7 @@ const commandInput = document.getElementById("command-input");
 const addButton = document.getElementById("add-button");
 const sortButton = document.getElementById("sort-button");
 const menu = document.getElementById("menu");
+const menuButton = document.getElementById("menu-button");
 const main = document.getElementById("main");
 const content = document.getElementById("content");
 const completeAllButton = document.getElementById("complete-all-button");
@@ -44,28 +45,14 @@ document.addEventListener("keydown", (e) => {
       }
 });
 
-document.addEventListener('click', (e) => {
-if (content.getBoundingClientRect().height < document.documentElement.clientHeight) {
-  content.style.border = 'none';
-  main.style.borderRight = 'var(--border)';
-}
-else {
-  content.style.borderRight = 'var(--border)';
-  main.style.borderRight = 'none';
-
-}
-  task = e.target.closest('.todo-container')
-    if (task) {
-
-      choose(task);
-    }
-});
 addButton.addEventListener("click", addTask);
 deleteAllButton.addEventListener("click", deleteOrRestoreAll);
 sortButton.addEventListener("click", sortList);
 menu.addEventListener("click", menuLinksHandler);
+menuButton.addEventListener('click', toggleMenu);
 prioritySelectorArrows.addEventListener('click', changePriority);
 completeAllButton.addEventListener('click', completeAll);
+window.addEventListener('resize', fixMenuDisplay)
 
 document.addEventListener("keyup", (e) => {
     const prioritySelector = document.getElementById("priority-selector");
@@ -304,7 +291,7 @@ function recreateView(listToView = allTasks["my-todo"]) {
     const mainData = createElementWithAttribute("section", "className", "main-data");
     const extendedData = createElementWithAttribute("section", "className", "extended-data");
     trashSpan.value = "delete";
-    trashSpan.addEventListener("click", loadingDiv, deleteTasks);
+    trashSpan.addEventListener("click", deleteTasks);
     checkbox.className = "checkbox";
     checkbox.addEventListener("click", completeTask);
     // const randomColor = createRandomColor();
@@ -341,6 +328,7 @@ function recreateView(listToView = allTasks["my-todo"]) {
         task.classList.remove('mouse-current');
       }
   });
+  task.addEventListener('click', choose);
     list.append(task);
   }
 }
@@ -368,7 +356,8 @@ function deleteTasks(tasksToDelete, loadingDiv, action) {
       }
     }
   }
-    setPersistent(API_KEY, loadingDiv, allTasks);
+  const hideLoadingDiv = true;
+    setPersistent(API_KEY, loadingDiv, allTasks, hideLoadingDiv);
 }
 
 function completeTasks(tasksToComplete, loadingDiv, action) {
@@ -395,7 +384,8 @@ function completeTasks(tasksToComplete, loadingDiv, action) {
       }
     }
   }
-  setPersistent(API_KEY, loadingDiv, allTasks);
+  const hideLoadingDiv = true;
+  setPersistent(API_KEY, loadingDiv, allTasks, hideLoadingDiv);
 }
 //      consider to unite taskCompleter and deleteTasks functions
 function dataStatusChanger(elementOrObjectType, elementOrObject) {
@@ -423,7 +413,6 @@ function completeTask(task) {
   dataStatusChanger("element", task);
   const currentTaskObj = allTasks["my-todo"].filter((item) => {
     if (item.date === taskDate.innerText) {
-      console.log("lskbfmf");
       dataStatusChanger("object", item);
       return true;
     }
@@ -539,6 +528,10 @@ function menuLinksHandler(menuLink) {
         navigator.innerText = navigationLink.querySelector('.counter-text').innerText;
         cleanPage();
     }
+
+    if (document.body.getBoundingClientRect().width <= 700) {
+      toggleMenu();
+    }
 }
 
   function containerButtonsCallback(e) {
@@ -608,7 +601,8 @@ function changePriority(event) {
     }
     
 }
-function choose(task) {
+function choose(event) {
+  const task = event.target;
   if (task.classList.contains('in-choice')) {
     task.classList.remove('in-choice');
       return;
@@ -638,8 +632,8 @@ function createRandomColor() {
 
   return randomColor;
 }
-function toggleLoadingScreen(loadingDiv) {
-  
+function toggleLoadingScreen() {
+  const loadingDiv = document.getElementById('loading-div');
   if (!loadingDiv.classList.contains('show-loading-div')) {
     loadingDiv.classList.add('show-loading-div');
     return;
@@ -647,4 +641,25 @@ function toggleLoadingScreen(loadingDiv) {
   else {
     loadingDiv.classList.remove('show-loading-div');
   }
+}
+
+function toggleMenu() {
+  const menu = document.getElementById('menu');
+  if (menu.style.display === 'block') {
+    menu.style.display = 'none';
+    return;
+  }
+  menu.style.display = 'block';
+}
+
+function fixMenuDisplay(event){
+  const menu = document.getElementById('menu');
+  const menuDisplayState = menu.style.display;
+  if(event.target.innerWidth > 750 && menuDisplayState === 'none') {
+    menu.style.display = 'block';
+  }
+  else if(event.target.innerWidth <= 750 && menuDisplayState === 'block') {
+    menu.style.display = 'none';
+  }
+
 }
