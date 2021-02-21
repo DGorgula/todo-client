@@ -6,6 +6,7 @@
     --background-color: #fafafa;
     --border: 0.05rem solid rgb(211, 211, 211);
     --big-text-color: rgb(211, 211, 211);
+    --main-blocks-height: 92vh;
 }
 
 * {
@@ -73,19 +74,19 @@ body {
     50% {margin-bottom: 0;}
 }
 main {
-    height: 98vh;
-    margin: 1rem 2rem 0 2rem;
+    height: auto;
+    margin: 1rem 2rem 0;
     padding: 0;
     display: grid;
     grid-template-columns: repeat(20, 1fr);
-    grid-template-rows: 5vh repeat(11, 1fr);
+    grid-template-rows: 5vh 1fr;
 }
 /* CSS for Menu */
 #menu {
     display: block;
     position: relative;
     grid-column: 1/5;
-    grid-row: 2/21;
+    min-height: var(--main-blocks-height) ;
     border-right: var(--border);
     border-left: var(--border);
     background-color: var(--background-color);
@@ -156,12 +157,14 @@ a {
 /*      Main CSS         */
 #content {
     grid-column: 5/21;
-    grid-row: 2/15;
+    height: fit-content;
+    min-height: var(--main-blocks-height) ;
     border-right: var(--border);
 }
 
 #View {
     margin: 0 2rem 3rem 2rem;
+    
 }
 
 .checkbox {
