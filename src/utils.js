@@ -1,50 +1,79 @@
 const API_KEY = '$2b$10$zZDdF7tEnFjVuWTOTyEIhuxHrQKMtNfrGQojBkNT5Hl1PBUn/LQ4K'; // Assign this variable to your JSONBIN.io API key if you choose to use it.
 const DB_NAME = "my-todo";
+let binId = '3769dc4d-4551-4dd9-89cf-e8be417bcd43';
+let tempBinId = '2a15e540-782e-4bd0-bb7e-ff0a9a8f350e';
 
 
 // Gets data from persistent storage by the given key and returns it
 function getPersistent(key, loadingDiv) {
   const request = {
-    headers: {'X-Master-Key': key
+    headers: {
   }};
   // loadingDiv.classList.add('show-loading-div');
   toggleLoadingScreen(loadingDiv);
-  fetch(`https://api.jsonbin.io/v3/b/601d120506934b65f52ebb62/latest`, request)
-  .then((rawResponse => {
-    rawResponse.json()
-    .then((response) => {
-      toggleLoadingScreen(loadingDiv);
-      // loadingDiv.classList.remove('show-loading-div');
-      allTasks['my-todo'] = response.record["my-todo"];
-      // recreateView(allTasks['my-todo']);
-      showOnly();
-      updateCounter();
-  })
-}) )
-}
-
-// Saves the given data into persistent storage by the given key.
+  try {
+    
+    fetch(`http://localhost:3000/${binId}`, request)
+    .then((rawResponse => {
+      rawResponse.json()
+      .then((response) => {
+        console.log(response);
+        toggleLoadingScreen(loadingDiv);
+        // loadingDiv.classList.remove('show-loading-div');
+        allTasks['my-todo'] = response["my-todo"];
+        // recreateView(allTasks['my-todo']);
+        showOnly();
+        updateCounter();
+      })
+      .catch((error) => {
+        console.log(`something went wrong with the database: ${error.stack}`); 
+      }
+      )
+    }) )
+  } catch (error) {
+    toggleLoadingScreen(loadingDiv);
+     console.log(`something went wrong with the database: ${error.stack}`);
+     alert("oops, something went wrong");
+  }
+  }
+  
+  // Saves the given data into persistent storage by the given key.
 // Returns 'true' on success.
 function setPersistent(key, loadingDiv, data, hideLoadingDiv = false) {
   const request = {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' , 'X-Master-Key': key
+    method: 'DELETE',
+    headers: { 
+      'Content-Type': 'application/json' 
   },
-  body: JSON.stringify(data)};
-  fetch("https://api.jsonbin.io/v3/b/601d120506934b65f52ebb62", request)
-  .then((response) => {
-    if (hideLoadingDiv) {
-      toggleLoadingScreen(loadingDiv)
+  body: JSON.stringify(data)
+};
+  try {
+    
+    fetch(`http://localhost:3000/${binId}`, request)
+    .then((response, error) => {
+      if (error) {
+        console.log(`something went wrong loading the data to the database: ${error.stack}`);
+      }
+      if (hideLoadingDiv) {
+        toggleLoadingScreen(loadingDiv)
+      }
+      
+      showOnly();
+      updateCounter();
     }
-
-    showOnly();
-    updateCounter();
+    ).catch((error) => {
+      console.log(`something went wrong loading the data to the database: ${error.stack}`); 
+    }
+    )
+    
+    return true;
   }
-  )
-  
-  return true;
+  catch (error) {
+    toggleLoadingScreen(loadingDiv);
+     console.log(`something went wrong with the database: ${error.stack}`);
+     alert("oops, something went wrong");
+  }
 }
-
 
 
 
