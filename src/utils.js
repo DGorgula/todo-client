@@ -8,70 +8,71 @@ let tempBinId = '2a15e540-782e-4bd0-bb7e-ff0a9a8f350e';
 function getPersistent(key, loadingDiv) {
   const request = {
     headers: {
-  }};
+    }
+  };
   // loadingDiv.classList.add('show-loading-div');
   toggleLoadingScreen(loadingDiv);
   try {
-    
+
     fetch(`http://localhost:3000/${binId}`, request)
-    .then((rawResponse => {
-      rawResponse.json()
-      .then((response) => {
-        console.log(response);
-        toggleLoadingScreen(loadingDiv);
-        // loadingDiv.classList.remove('show-loading-div');
-        allTasks['my-todo'] = response["my-todo"];
-        // recreateView(allTasks['my-todo']);
-        showOnly();
-        updateCounter();
-      })
-      .catch((error) => {
-        console.log(`something went wrong with the database: ${error.stack}`); 
-      }
-      )
-    }) )
+      .then((rawResponse => {
+        rawResponse.json()
+          .then((response) => {
+            console.log(response);
+            toggleLoadingScreen(loadingDiv);
+            // loadingDiv.classList.remove('show-loading-div');
+            allTasks['my-todo'] = response["my-todo"];
+            // recreateView(allTasks['my-todo']);
+            showOnly();
+            updateCounter();
+          })
+          .catch((error) => {
+            console.log(`something went wrong with the database: ${error.stack}`);
+          }
+          )
+      }))
   } catch (error) {
     toggleLoadingScreen(loadingDiv);
-     console.log(`something went wrong with the database: ${error.stack}`);
-     alert("oops, something went wrong");
+    console.log(`something went wrong with the database: ${error.stack}`);
+    alert("oops, something went wrong");
   }
-  }
-  
-  // Saves the given data into persistent storage by the given key.
+}
+
+// Saves the given data into persistent storage by the given key.
 // Returns 'true' on success.
 function setPersistent(key, loadingDiv, data, hideLoadingDiv = false) {
   const request = {
     method: 'DELETE',
-    headers: { 
-      'Content-Type': 'application/json' 
-  },
-  body: JSON.stringify(data)
-};
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  };
   try {
-    
+
     fetch(`http://localhost:3000/${binId}`, request)
-    .then((response, error) => {
-      if (error) {
+      .then((response, error) => {
+        if (error) {
+          console.log(`something went wrong loading the data to the database: ${error.stack}`);
+        }
+        if (hideLoadingDiv) {
+          toggleLoadingScreen(loadingDiv)
+        }
+
+        showOnly();
+        updateCounter();
+      }
+      ).catch((error) => {
         console.log(`something went wrong loading the data to the database: ${error.stack}`);
       }
-      if (hideLoadingDiv) {
-        toggleLoadingScreen(loadingDiv)
-      }
-      
-      showOnly();
-      updateCounter();
-    }
-    ).catch((error) => {
-      console.log(`something went wrong loading the data to the database: ${error.stack}`); 
-    }
-    )
-    
+      )
+
     return true;
   }
   catch (error) {
     toggleLoadingScreen(loadingDiv);
-     console.log(`something went wrong with the database: ${error.stack}`);
-     alert("oops, something went wrong");
+    console.log(`something went wrong with the database: ${error.stack}`);
+    alert("oops, something went wrong");
   }
 }
 

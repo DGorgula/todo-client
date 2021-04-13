@@ -22,6 +22,6 @@
     "jest": "^26.0.1",
     "nock": "^13.0.6",
     "nock-puppeteer": "^1.0.2",
-    "puppeteer": "^4.0.0"
+    "puppeteer": "^4.0.1"
   }
 }
